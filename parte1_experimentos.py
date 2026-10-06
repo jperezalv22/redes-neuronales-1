@@ -129,7 +129,7 @@ def main():
 def guardar_tablas(filas, salida, a):
     columnas = list(filas[0].keys())
     with open(salida / "tabla_resultados.csv", "w", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=columnas)
+        w = csv.DictWriter(f, fieldnames=columnas, lineterminator="\n")
         w.writeheader()
         w.writerows(filas)
 

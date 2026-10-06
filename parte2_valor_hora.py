@@ -89,7 +89,7 @@ def main():
         })
 
     with open(salida / "valor_hora.csv", "w", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=list(filas[0].keys()))
+        w = csv.DictWriter(f, fieldnames=list(filas[0].keys()), lineterminator="\n")
         w.writeheader()
         w.writerows(filas)
     lineas = ["| Valor hora (€/h) | km | horas | peajes (€) | combustible (€) | costo total (€) | aristas distintas |",

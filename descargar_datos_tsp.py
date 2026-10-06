@@ -109,7 +109,7 @@ def main():
     print("1) Coordenadas (Nominatim)")
     ciudades = geocodificar()
     with open(CARPETA / "capitales.csv", "w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=["ciudad", "provincia", "lat", "lon"])
+        w = csv.DictWriter(f, fieldnames=["ciudad", "provincia", "lat", "lon"], lineterminator="\n")
         w.writeheader()
         w.writerows(ciudades)
 
@@ -130,11 +130,11 @@ def main():
         print(f"  {ciudades[i]['ciudad']} listo")
 
     with open(CARPETA / "distancia_km.csv", "w", newline="") as f:
-        csv.writer(f).writerows([[round(x, 3) for x in fila] for fila in dist])
+        csv.writer(f, lineterminator="\n").writerows([[round(x, 3) for x in fila] for fila in dist])
     with open(CARPETA / "tiempo_h.csv", "w", newline="") as f:
-        csv.writer(f).writerows([[round(x, 4) for x in fila] for fila in tiempo])
+        csv.writer(f, lineterminator="\n").writerows([[round(x, 4) for x in fila] for fila in tiempo])
     with open(CARPETA / "km_por_via.csv", "w", newline="", encoding="utf-8") as f:
-        w = csv.writer(f)
+        w = csv.writer(f, lineterminator="\n")
         w.writerow(["i", "j", "via", "lat", "km"])
         w.writerows(tramos)
 
