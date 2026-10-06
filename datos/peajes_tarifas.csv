@@ -1,0 +1,21 @@
+via,tramo_referencia,importe_ligeros_eur,longitud_km_aprox,fuente,fecha_consulta
+AP-68,Bilbao - Zaragoza,39.90,294,"Ministerio de Transportes, Peajes vigentes desde 01/01/2026 AP-68 (PDF)",2026-10-06
+AP-6,Villalba - Adanero,15.70,70,"Ministerio de Transportes, Peajes vigentes desde 01/01/2026 AP-6 (PDF)",2026-10-06
+AP-71,León - Astorga (tarifa diurna),6.20,38,"Ministerio de Transportes, Peajes vigentes desde 01/01/2026 AP-71 (PDF)",2026-10-06
+AP-53,Santiago - Alto de Santo Domingo,7.25,56,"Ministerio de Transportes, Peajes vigentes desde 01/01/2026 AP-53 (PDF)",2026-10-06
+AP-9,,,,"Sin tarifa por km verificada: se usa el promedio",
+AP-66,,,,"Sin tarifa por km verificada: se usa el promedio",
+AP-51,,,,"Sin tarifa por km verificada: se usa el promedio",
+AP-61,,,,"Sin tarifa por km verificada: se usa el promedio",
+AP-46,,,,"Sin tarifa por km verificada: se usa el promedio",
+AP-7,"Solo tramos al sur de Alicante (Alicante-Cartagena, Cartagena-Vera, Málaga-Guadiaro)",,,"Sin tarifa por km verificada: se usa el promedio",
+AP-36,,,,"Sin tarifa por km verificada: se usa el promedio (SEITT)",
+AP-41,,,,"Sin tarifa por km verificada: se usa el promedio (SEITT)",
+R-2,,,,"Sin tarifa por km verificada: se usa el promedio (SEITT)",
+R-3,,,,"Sin tarifa por km verificada: se usa el promedio (SEITT)",
+R-4,,,,"Sin tarifa por km verificada: se usa el promedio (SEITT)",
+R-5,,,,"Sin tarifa por km verificada: se usa el promedio (SEITT)",
+M-12,,,,"Sin tarifa por km verificada: se usa el promedio (SEITT)",
+AP-8,,,,"Autopista foral (Bizkaia/Gipuzkoa), no esta en el listado del Ministerio. Verificar",
+AP-1,"Solo tramo Vitoria - Eibar (el tramo Burgos - Armiñón es libre desde 2018)",,,"Autopista foral (Gipuzkoa/Álava). Verificar",
+AP-15,,,,"Autopista foral (Navarra). Verificar",
