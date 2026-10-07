@@ -13,6 +13,9 @@ Como el costo es  C_h = h * tiempo + (peajes + combustible),  para un
 recorrido fijo el costo total es una recta en h. El recorrido optimo es el
 de la "envolvente inferior" de esas rectas, y cambia solo en los cruces.
 
+Ademas, como cada recorrido es una recta en h, calculamos el valor exacto de h
+en el que una ruta pasa a ser mejor que la anterior (cruce de las rectas).
+
 Salidas en resultados/parte2/:
   - valor_hora.csv / valor_hora.md : km, horas, peajes y costo por cada h
   - valor_hora.png                 : como cambian km, horas y peajes con h
@@ -40,7 +43,7 @@ def leer_argumentos():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--config", default="configuracion_tsp.json")
     p.add_argument("--valores", nargs="+", type=float,
-                   default=[0, 5, 10, 15, 20, 30, 50, 75, 100, 150, 200])
+                   default=[0, 2.5, 5, 7.5, 10, 15, 20, 25, 30, 40, 50, 75, 100, 150, 200])
     p.add_argument("--iteraciones", type=int, default=60)
     p.add_argument("--hormigas", type=int, default=20)
     p.add_argument("--semilla", type=int, default=2026)
@@ -97,6 +100,18 @@ def main():
     for r in filas:
         lineas.append(f"| {r['valor_hora']:g} | {r['km']:,} | {r['horas']} | {r['peajes_eur']} | "
                       f"{r['combustible_eur']} | {r['costo_total_eur']:,} | {r['aristas_distintas_vs_primero']} |")
+
+    # 3) valor exacto de h donde una ruta pasa a ser mejor que la anterior.
+    # Para cada ruta: costo(h) = dinero + h * horas, con dinero = peajes + combustible.
+    # Dos rectas se cruzan en h* = (dinero_B - dinero_A) / (horas_A - horas_B).
+    lineas.append("\nCambios de ruta (cruce exacto de las rectas de costo):\n")
+    for k in range(1, len(rutas)):
+        if aristas(rutas[k]) != aristas(rutas[k - 1]):
+            A, B = datos.desglose(rutas[k - 1], 0), datos.desglose(rutas[k], 0)
+            h_cruce = (B["costo_total_eur"] - A["costo_total_eur"]) / (A["horas"] - B["horas"])
+            lineas.append(f"- Entre h = {a.valores[k - 1]:g} y h = {a.valores[k]:g} €/h: la ruta cambia en "
+                          f"h* ≈ {h_cruce:.2f} €/h (ahorra {A['horas'] - B['horas']:.2f} h y gasta "
+                          f"{B['costo_total_eur'] - A['costo_total_eur']:.2f} € más en peajes y combustible)")
     (salida / "valor_hora.md").write_text("\n".join(lineas) + "\n")
     print("\n".join(lineas))
 
