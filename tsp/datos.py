@@ -69,6 +69,24 @@ def es_tramo_de_peaje(via, lat):
     return True
 
 
+def via_de_peaje(ref, nombre, tarifas):
+    """Devuelve la autopista de pago por la que va un tramo, o None.
+
+    `ref` puede traer varias vias separadas por ";" (por ejemplo "AP-7;E-15").
+    Ademas, en OpenStreetMap algunos tramos de autopista de pago estan
+    etiquetados sin la P: el tramo Campomanes-Leon de la AP-66 aparece como
+    "A-66" con nombre "Autopista Ruta de la Plata". Por eso, si la via es
+    "A-xx", existe la "AP-xx" de pago y el nombre dice "Autopista", la
+    contamos como AP-xx.
+    """
+    for via in (v.strip() for v in ref.split(";")):
+        if via in tarifas:
+            return via
+        if via.startswith("A-") and "AP-" + via[2:] in tarifas and "autopista" in nombre.lower():
+            return "AP-" + via[2:]
+    return None
+
+
 def cargar_peajes(n):
     """Matriz n x n con el costo de peajes (euros) de cada trayecto."""
     tarifas = tarifas_por_km()
@@ -76,8 +94,8 @@ def cargar_peajes(n):
     km_peaje = np.zeros((n, n))
     with open(CARPETA / "km_por_via.csv", encoding="utf-8") as f:
         for r in csv.DictReader(f):
-            via, lat = r["via"], float(r["lat"])
-            if via in tarifas and es_tramo_de_peaje(via, lat):
+            via = via_de_peaje(r["ref"], r["nombre"], tarifas)
+            if via and es_tramo_de_peaje(via, float(r["lat"])):
                 i, j, km = int(r["i"]), int(r["j"]), float(r["km"])
                 peaje[i, j] += km * tarifas[via]
                 km_peaje[i, j] += km

@@ -75,8 +75,8 @@ def geocodificar():
 def ruta(a, b):
     """Pide a OSRM la ruta en carro entre dos ciudades.
 
-    Devuelve (km, horas, {via: km}) donde el diccionario dice cuantos km
-    de la ruta van por cada via con codigo (AP-6, A-1, ...).
+    Devuelve (km, horas, tramos) donde cada tramo es [ref, nombre, lat, km]:
+    cuantos km de la ruta van por cada via con codigo (AP-6, A-1, ...).
     """
     coords = f"{a['lon']},{a['lat']};{b['lon']},{b['lat']}"
     url = (f"https://router.project-osrm.org/route/v1/driving/{coords}"
@@ -89,17 +89,16 @@ def ruta(a, b):
             print("    error, reintentando:", e)
             time.sleep(5 * (intento + 1))
     r = res["routes"][0]
-    km_por_via = {}
+    tramos = []
     for paso in r["legs"][0]["steps"]:
         ref = paso.get("ref")
         if not ref:
             continue
-        # una via puede venir como "AP-7;E-15": nos quedamos con la primera
-        via = ref.split(";")[0].strip()
+        # guardamos la referencia completa (puede ser "AP-7;E-15"), el nombre
+        # de la via y la latitud (para separar tramos de pago de la AP-7 y AP-1)
         lat = paso["maneuver"]["location"][1]
-        clave = f"{via}@{lat:.3f}"  # guardamos la latitud para separar tramos de la AP-7 y AP-1
-        km_por_via[clave] = km_por_via.get(clave, 0) + paso["distance"] / 1000
-    return r["distance"] / 1000, r["duration"] / 3600, km_por_via
+        tramos.append([ref, paso.get("name", ""), round(lat, 3), round(paso["distance"] / 1000, 3)])
+    return r["distance"] / 1000, r["duration"] / 3600, tramos
 
 
 def main():
@@ -117,15 +116,14 @@ def main():
     n = len(ciudades)
     dist = [[0.0] * n for _ in range(n)]
     tiempo = [[0.0] * n for _ in range(n)]
-    tramos = []  # filas (i, j, via, lat, km)
+    tramos = []  # filas (i, j, ref, nombre, lat, km)
     for i in range(n):
         for j in range(i + 1, n):
-            km, h, vias = ruta(ciudades[i], ciudades[j])
+            km, h, pasos = ruta(ciudades[i], ciudades[j])
             dist[i][j] = dist[j][i] = km
             tiempo[i][j] = tiempo[j][i] = h
-            for clave, km_via in vias.items():
-                via, lat = clave.split("@")
-                tramos.append([i, j, via, lat, round(km_via, 3)])
+            for ref, nombre, lat, km_paso in pasos:
+                tramos.append([i, j, ref, nombre, lat, km_paso])
             time.sleep(0.3)
         print(f"  {ciudades[i]['ciudad']} listo")
 
@@ -135,7 +133,7 @@ def main():
         csv.writer(f, lineterminator="\n").writerows([[round(x, 4) for x in fila] for fila in tiempo])
     with open(CARPETA / "km_por_via.csv", "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f, lineterminator="\n")
-        w.writerow(["i", "j", "via", "lat", "km"])
+        w.writerow(["i", "j", "ref", "nombre", "lat", "km"])
         w.writerows(tramos)
 
     print("3) Contorno de Espana")
