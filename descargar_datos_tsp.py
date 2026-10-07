@@ -11,14 +11,17 @@ Fuentes:
     (router.project-osrm.org), perfil "driving".
   - Kilometros recorridos en cada autopista: se sacan de los pasos (steps)
     de la ruta de OSRM, que traen el codigo de la via (AP-6, AP-68, ...).
-  - Contorno de Espana para el mapa: johan/world.geo.json (Natural Earth).
+  - Contorno de Espana para el mapa: Natural Earth 1:50m (repositorio
+    nvkelso/natural-earth-vector en GitHub).
 
 Uso:
-    python descargar_datos_tsp.py
+    python descargar_datos_tsp.py               # todo (unos 15 min)
+    python descargar_datos_tsp.py --solo-mapa   # solo el contorno del mapa
 """
 
 import csv
 import json
+import sys
 import time
 import urllib.parse
 import urllib.request
@@ -101,7 +104,24 @@ def ruta(a, b):
     return r["distance"] / 1000, r["duration"] / 3600, tramos
 
 
+def descargar_mapa():
+    """Contornos de Espana y paises vecinos (Natural Earth, escala 1:50m)."""
+    print("3) Contorno de Espana (Natural Earth 1:50m)")
+    url = ("https://raw.githubusercontent.com/nvkelso/natural-earth-vector/"
+           "master/geojson/ne_50m_admin_0_countries.geojson")
+    mundo = pedir_json(url)
+    paises = ["ESP", "PRT", "FRA", "AND"]
+    mundo["features"] = [
+        {"type": "Feature", "properties": {"iso": f["properties"]["ADM0_A3"]}, "geometry": f["geometry"]}
+        for f in mundo["features"] if f["properties"]["ADM0_A3"] in paises
+    ]
+    (CARPETA / "espana.geojson").write_text(json.dumps(mundo))
+
+
 def main():
+    if "--solo-mapa" in sys.argv:  # para regenerar solo el mapa, sin las rutas
+        descargar_mapa()
+        return
     CARPETA.mkdir(exist_ok=True)
     hoy = date.today().isoformat()
 
@@ -136,15 +156,13 @@ def main():
         w.writerow(["i", "j", "ref", "nombre", "lat", "km"])
         w.writerows(tramos)
 
-    print("3) Contorno de Espana")
-    url = "https://raw.githubusercontent.com/johan/world.geo.json/master/countries/ESP.geo.json"
-    (CARPETA / "espana.geojson").write_text(json.dumps(pedir_json(url)))
+    descargar_mapa()
 
     (CARPETA / "fecha_descarga.txt").write_text(
         f"Datos descargados el {hoy}\n"
         "Coordenadas: Nominatim (OpenStreetMap)\n"
         "Rutas: OSRM, router.project-osrm.org, perfil driving\n"
-        "Contorno: github.com/johan/world.geo.json (Natural Earth)\n"
+        "Contorno: Natural Earth 1:50m (github.com/nvkelso/natural-earth-vector)\n"
     )
     print("Listo.")
 

@@ -12,14 +12,16 @@ from .datos import CARPETA
 
 
 def dibujar_contorno(ax):
-    """Dibuja el contorno de Espana leido de datos/espana.geojson."""
+    """Dibuja Espana (y en gris los paises vecinos) desde datos/espana.geojson."""
     geo = json.loads((CARPETA / "espana.geojson").read_text())
+    ax.set_facecolor("#dbe9f4")  # mar
     for feature in geo["features"]:
+        relleno = "#f2efe6" if feature["properties"]["iso"] == "ESP" else "#e0e0e0"
         g = feature["geometry"]
         poligonos = g["coordinates"] if g["type"] == "MultiPolygon" else [g["coordinates"]]
         for poli in poligonos:
-            anillo = np.array(poli[0])
-            ax.fill(anillo[:, 0], anillo[:, 1], color="#f2efe6", ec="#999999", lw=0.8)
+            anillo = np.array(poli[0])  # el primer anillo es el borde exterior
+            ax.fill(anillo[:, 0], anillo[:, 1], color=relleno, ec="#999999", lw=0.6)
     ax.set_xlim(-9.6, 3.6)
     ax.set_ylim(35.8, 44.0)
     # corregimos la deformacion: 1 grado de longitud mide menos que 1 de latitud
