@@ -32,8 +32,10 @@ Cada experimento se lanza con un solo comando. Los resultados (tablas, figuras y
 | Parte 1: 30 corridas, tabla y gráficas | `python parte1_experimentos.py` | 1.5 min |
 | Parte 1: demostración rápida | `python parte1_experimentos.py --corridas 5` | 20 s |
 | Parte 1: GIF (GD y PSO) | `python parte1_animacion.py` | 25 s |
-| Parte 2: ruta con ACO y GA + GIF | `python parte2_tsp.py --gif` | 30 s |
-| Parte 2: estudio del valor de la hora | `python parte2_valor_hora.py` | 1 min |
+| Parte 2: ruta con ACO y GA + GIF | `python parte2_tsp.py --gif` | 15 s |
+| Parte 2: GIF sin 2-opt (más cuadros) | `python parte2_tsp.py --sin-2opt --gif --salida resultados/parte2/sin_2opt` | 10 s |
+| Parte 2: ACO vs GA, con y sin 2-opt (10 corridas) | `python parte2_comparacion.py` | 2 min |
+| Parte 2: estudio del valor de la hora | `python parte2_valor_hora.py` | 45 s |
 
 Para ver todas las opciones de un script: `python <script>.py --help`.
 
@@ -66,7 +68,7 @@ Todo es reproducible.
 
 - Parte 1: la corrida `k` usa la semilla `2026 + k`. Todos los métodos usan la misma semilla en la misma corrida. Se cambia con `--semilla`.
 - GIF de la parte 1: semilla `2`.
-- Parte 2: semilla `2026` para ACO y GA.
+- Parte 2: semilla `2026` para ACO y GA. En `parte2_comparacion.py` la corrida `k` usa `2026 + k`.
 
 ## Estructura
 
@@ -99,8 +101,8 @@ Todos los datos están guardados en `datos/`, así que **ningún experimento nec
 | `tiempo_h.csv` | matriz 47×47 de tiempos de viaje | OSRM | 2026-10-06 |
 | `km_por_via.csv` | km que recorre cada ruta por cada vía (AP-6, A-1, ...) | OSRM | 2026-10-06 |
 | `peajes_tarifas.csv` | autopistas de peaje y tarifa | Ministerio de Transportes, peajes vigentes desde el 01/01/2026 | 2026-10-06 |
-| `espana.geojson` | contorno de España para el mapa | johan/world.geo.json (Natural Earth) | 2026-10-06 |
-| `../configuracion_tsp.json` | vehículo, consumo, precio del gasóleo | km77.com y Boletín Petrolero de la UE | 2026-10-06 |
+| `espana.geojson` | contornos de España y países vecinos | Natural Earth 1:50m | 2026-10-06 |
+| `../configuracion_tsp.json` | vehículo, consumo (4.6 l/100 km) y precio del gasóleo (1.934 €/l, Weekly Oil Bulletin al 28/09/2026) | km77.com y Comisión Europea | 2026-10-06 |
 
 ### Cómo se calcula el costo de un trayecto
 
@@ -117,7 +119,7 @@ Los **peajes** se calculan así: OSRM devuelve la ruta paso a paso con el códig
 - OSRM elige la ruta más rápida y no tiene en cuenta el peaje. No buscamos rutas alternativas sin peaje.
 - Las autopistas forales (AP-8, AP-1 en Gipuzkoa, AP-15 en Navarra) no aparecen en las tablas del Ministerio, así que su tarifa está por verificar.
 
-Antes de entregar, **revisen los valores marcados como "VERIFICAR"** en `configuracion_tsp.json` y `datos/peajes_tarifas.csv`.
+Antes de entregar, **revisen las autopistas marcadas como "Verificar"** en `datos/peajes_tarifas.csv`.
 
 ## Para volver a descargar los datos (opcional)
 
