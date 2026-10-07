@@ -1,0 +1,4 @@
+Datos descargados el 2026-10-06
+Coordenadas: Nominatim (OpenStreetMap)
+Rutas: OSRM, router.project-osrm.org, perfil driving
+Contorno: github.com/johan/world.geo.json (Natural Earth)
