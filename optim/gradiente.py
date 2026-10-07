@@ -27,17 +27,20 @@ def descenso_gradiente(problema, x0, presupuesto, eta=1e-3, tol=1e-8):
 
     # costo de una iteracion = 1 gradiente (2n) + 1 evaluacion de f
     costo_iter = 2 * problema.dim + 1
-    while problema.costo() + costo_iter <= presupuesto:
-        g = problema.grad(x)
-        if np.linalg.norm(g) < tol:
-            break
-        x = x - eta * g
-        fx = problema.f(x)
-        if not np.isfinite(fx):
-            break  # divergio
-        if fx < mejor_f:
-            mejor_x, mejor_f = x.copy(), fx
-        curva.append((problema.costo(), mejor_f))
-        trayectoria.append(x.copy())
+    # si diverge, numpy avisa "overflow"; lo silenciamos porque la
+    # divergencia la detectamos nosotros con np.isfinite
+    with np.errstate(over="ignore", invalid="ignore"):
+        while problema.costo() + costo_iter <= presupuesto:
+            g = problema.grad(x)
+            if np.linalg.norm(g) < tol:
+                break
+            x = x - eta * g
+            fx = problema.f(x)
+            if not np.isfinite(fx):
+                break  # divergio
+            if fx < mejor_f:
+                mejor_x, mejor_f = x.copy(), fx
+            curva.append((problema.costo(), mejor_f))
+            trayectoria.append(x.copy())
 
     return {"x": mejor_x, "f": mejor_f, "curva": curva, "trayectoria": trayectoria}
