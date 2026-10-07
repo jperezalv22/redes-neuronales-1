@@ -4,7 +4,7 @@
   "combustible": "gasóleo",
   "consumo_l_100km": 4.6,
   "fuente_consumo": "km77.com, ficha técnica SEAT León 2.0 TDI 85 kW (115 CV) Style (2024), consumo WLTP combinado. Consultado 2026-10-06",
-  "precio_combustible_eur_l": 1.834,
-  "fuente_precio": "Boletín Petrolero de la Unión Europea, precio medio del gasóleo en España a 14/09/2026 (citado en prensa). Consultado 2026-10-06. VERIFICAR en el boletín original",
+  "precio_combustible_eur_l": 1.934,
+  "fuente_precio": "Comisión Europea, Weekly Oil Bulletin, precios con impuestos (archivo 'Weekly prices with Taxes'), España, gasóleo de automoción: 1934.43 EUR por 1000 l, precios al 28/09/2026. Consultado 2026-10-06",
   "nota": "Estos valores se pueden cambiar aquí o desde la línea de comandos (ver python parte2_tsp.py --help)."
 }
