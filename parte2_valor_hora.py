@@ -1,8 +1,8 @@
 """
 Estudio del valor de la hora del vendedor: ¿cambia la ruta optima?
 
-Para cada valor de la hora h se resuelve el TSP con colonia de hormigas
-(+2-opt) y se guarda el mejor recorrido.
+Para cada valor de la hora h se resuelve el TSP con colonia de hormigas y
+con el algoritmo genetico (los dos con 2-opt) y se guardan los recorridos.
 
 Truco para que el ruido del algoritmo no nos engañe: al final, para cada h
 se evaluan TODOS los recorridos encontrados (con cualquier h) usando el costo
@@ -23,7 +23,7 @@ Salidas en resultados/parte2/:
 
 Ejemplo:
     python parte2_valor_hora.py
-    python parte2_valor_hora.py --valores 0 10 20 50 100 --iteraciones 60
+    python parte2_valor_hora.py --valores 0 10 20 50 100 --iteraciones 100
 """
 
 import argparse
@@ -35,7 +35,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
-from tsp import DatosTSP, cargar_config, colonia_hormigas, costo_ruta
+from tsp import DatosTSP, algoritmo_genetico_tsp, cargar_config, colonia_hormigas, costo_ruta
 from tsp.mapa import dibujar_contorno, dibujar_ruta
 
 
@@ -44,8 +44,9 @@ def leer_argumentos():
     p.add_argument("--config", default="configuracion_tsp.json")
     p.add_argument("--valores", nargs="+", type=float,
                    default=[0, 2.5, 5, 7.5, 10, 15, 20, 25, 30, 40, 50, 75, 100, 150, 200])
-    p.add_argument("--iteraciones", type=int, default=60)
+    p.add_argument("--iteraciones", type=int, default=60, help="iteraciones de ACO")
     p.add_argument("--hormigas", type=int, default=20)
+    p.add_argument("--generaciones", type=int, default=150, help="generaciones del GA")
     p.add_argument("--semilla", type=int, default=2026)
     p.add_argument("--salida", default="resultados/parte2")
     return p.parse_args()
@@ -63,13 +64,15 @@ def main():
     salida = Path(a.salida)
     salida.mkdir(parents=True, exist_ok=True)
 
-    # 1) resolver para cada h
+    # 1) resolver para cada h con los dos metodos
     encontradas = []
     for h in a.valores:
-        rng = np.random.default_rng(a.semilla)
-        res = colonia_hormigas(datos.costo(h), rng, n_hormigas=a.hormigas, iteraciones=a.iteraciones)
-        encontradas.append(res["ruta"])
-        print(f"h = {h:6.1f} EUR/h  costo = {res['costo']:,.2f} EUR")
+        C = datos.costo(h)
+        aco = colonia_hormigas(C, np.random.default_rng(a.semilla), n_hormigas=a.hormigas,
+                               iteraciones=a.iteraciones)
+        ga = algoritmo_genetico_tsp(C, np.random.default_rng(a.semilla), generaciones=a.generaciones)
+        encontradas += [aco["ruta"], ga["ruta"]]
+        print(f"h = {h:6.1f} EUR/h  ACO = {aco['costo']:,.2f}  GA = {ga['costo']:,.2f} EUR")
 
     # 2) para cada h, la mejor de todas las rutas encontradas
     filas, rutas = [], []
