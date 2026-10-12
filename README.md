@@ -36,6 +36,7 @@ Cada experimento se lanza con un solo comando. Los resultados (tablas, figuras y
 | Parte 2: GIF sin 2-opt (más cuadros) | `python parte2_tsp.py --sin-2opt --gif --salida resultados/parte2/sin_2opt` | 10 s |
 | Parte 2: ACO vs GA, con y sin 2-opt (10 corridas) | `python parte2_comparacion.py` | 2 min |
 | Parte 2: estudio del valor de la hora | `python parte2_valor_hora.py` | 45 s |
+| Parte 2: validar los peajes contra precios oficiales | `python validar_peajes.py` | 1 s |
 
 Para ver todas las opciones de un script: `python <script>.py --help`.
 
@@ -100,7 +101,8 @@ Todos los datos están guardados en `datos/`, así que **ningún experimento nec
 | `distancia_km.csv` | matriz 47×47 de distancias por carretera | OSRM (router.project-osrm.org) | 2026-10-06 |
 | `tiempo_h.csv` | matriz 47×47 de tiempos de viaje | OSRM | 2026-10-06 |
 | `km_por_via.csv` | km que recorre cada ruta por cada vía (AP-6, A-1, ...) | OSRM | 2026-10-06 |
-| `peajes_tarifas.csv` | autopistas de peaje y tarifa | Ministerio de Transportes, peajes vigentes desde el 01/01/2026 | 2026-10-06 |
+| `peajes_tarifas.csv` | tarifa 2026 para turismo y longitud de cada tramo de pago, con la URL de cada dato | Ministerio de Transportes, SEITT y concesionarias | 2026-10-11 |
+| `peajes_validacion.csv` | precio oficial de 8 viajes completos, para validar el modelo de peajes | Concesionarias y Ministerio | 2026-10-11 |
 | `espana.geojson` | contornos de España y países vecinos | Natural Earth 1:50m | 2026-10-06 |
 | `../configuracion_tsp.json` | vehículo, consumo (4.6 l/100 km) y precio del gasóleo (1.934 €/l, Weekly Oil Bulletin al 28/09/2026) | km77.com y Comisión Europea | 2026-10-06 |
 
@@ -112,14 +114,16 @@ costo(i, j) = valor_hora * tiempo(i, j)
             + distancia(i, j) * consumo / 100 * precio_litro
 ```
 
-Los **peajes** se calculan así: OSRM devuelve la ruta paso a paso con el código de cada vía. Sumamos los km que van por autopistas que siguen siendo de pago en 2026 y los multiplicamos por una tarifa en €/km. La tarifa sale de dividir el precio de un tramo completo (de las tablas oficiales del Ministerio) entre su longitud. Para las autopistas de las que no tenemos ese dato usamos el promedio. Es una aproximación y tiene limitaciones:
+Los **peajes** se calculan así: OSRM devuelve la ruta paso a paso con el código de cada vía. Sumamos los km que van por autopistas que siguen siendo de pago en 2026 y los multiplicamos por una tarifa en €/km. La tarifa sale de dividir el precio oficial 2026 del tramo completo entre su longitud oficial. Cuando esa longitud no cuadra con los km que da OSRM (AP-6, AP-61, AP-51, AP-8, AP-1 y C-32), la tarifa se calibra con el precio de un viaje completo (columna `eur_km_calibrado`; el cálculo está en `fuente_longitud`). Solo la M-12 usa el promedio de las demás.
 
-- La longitud de cada tramo de referencia es aproximada.
-- Varias autopistas (AP-1, AP-2, AP-4, la AP-7 al norte de Alicante...) dejaron de cobrar peaje entre 2018 y 2026. La AP-7 y la AP-1 son de pago solo en algunos tramos, y los separamos por latitud (ver `tsp/datos.py`).
+Para comprobarlo, `python validar_peajes.py` compara el modelo con el precio oficial de 8 viajes completos: los 4 que no se usaron para calibrar quedan a ±2 %, salvo Bilbao–Logroño (−11.5 %).
+
+Es una aproximación y tiene limitaciones:
+
+- Usamos una tarifa por km constante en cada tramo; en la realidad se paga por recorrido entre salidas.
+- Varias autopistas (AP-1, AP-2, AP-4, la AP-7 al norte de Alicante...) dejaron de cobrar peaje entre 2018 y 2026. La AP-7 (tres tramos al sur de Alicante) y la AP-1 (Eibar–Vitoria) son de pago solo en parte, y los tramos se separan por latitud (`lat_min`, `lat_max`).
 - OSRM elige la ruta más rápida y no tiene en cuenta el peaje. No buscamos rutas alternativas sin peaje.
-- Las autopistas forales (AP-8, AP-1 en Gipuzkoa, AP-15 en Navarra) no aparecen en las tablas del Ministerio, así que su tarifa está por verificar.
-
-Antes de entregar, **revisen las autopistas marcadas como "Verificar"** en `datos/peajes_tarifas.csv`.
+- La longitud de la AP-15 es dudosa: las fuentes dan entre 83.5 y 112 km según el recorrido.
 
 ## Para volver a descargar los datos (opcional)
 

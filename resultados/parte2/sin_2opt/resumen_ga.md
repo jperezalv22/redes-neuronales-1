@@ -2,17 +2,17 @@
 
 - Valor de la hora: 15.00 €/h
 - Vehículo: SEAT León 2.0 TDI 85 kW (115 CV), 5 puertas, 2024 (4.6 l/100 km, 1.934 €/l)
-- Tiempo de cómputo: 1.4 s
+- Tiempo de cómputo: 2.2 s
 
 | Concepto | Valor |
 |---|---|
-| Distancia total | 6,986.8 km |
-| Tiempo de conducción | 88.47 h |
-| Costo del tiempo | 1,327.09 € |
-| Peajes | 38.13 € |
-| Combustible | 621.58 € |
-| **Costo total** | **1,986.80 €** |
+| Distancia total | 6,959.8 km |
+| Tiempo de conducción | 87.53 h |
+| Costo del tiempo | 1,312.93 € |
+| Peajes | 67.05 € |
+| Combustible | 619.17 € |
+| **Costo total** | **1,999.15 €** |
 
 Orden del recorrido:
 
-Cuenca → Guadalajara → Madrid → Valladolid → Palencia → León → Burgos → Vitoria-Gasteiz → Logroño → Soria → Segovia → Ávila → Toledo → Ciudad Real → Jaén → Almería → Málaga → Granada → Córdoba → Cádiz → Huelva → Sevilla → Badajoz → Cáceres → Salamanca → Zamora → Ourense → Pontevedra → Lugo → A Coruña → Oviedo → Santander → Bilbao → Donostia-San Sebastián → Pamplona → Huesca → Tarragona → Girona → Barcelona → Lleida → Zaragoza → Teruel → València → Castelló de la Plana → Alacant → Murcia → Albacete → Cuenca
+Toledo → Madrid → Guadalajara → Segovia → Ávila → Palencia → Valladolid → León → Burgos → Santander → Oviedo → Lugo → A Coruña → Pontevedra → Ourense → Zamora → Salamanca → Cáceres → Badajoz → Huelva → Cádiz → Sevilla → Córdoba → Granada → Jaén → Málaga → Almería → Murcia → Alacant → Albacete → València → Castelló de la Plana → Tarragona → Girona → Barcelona → Lleida → Pamplona → Donostia-San Sebastián → Bilbao → Vitoria-Gasteiz → Logroño → Soria → Zaragoza → Huesca → Teruel → Cuenca → Ciudad Real → Toledo
