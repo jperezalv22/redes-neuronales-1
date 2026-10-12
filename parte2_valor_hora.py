@@ -115,7 +115,7 @@ def main():
             lineas.append(f"- Entre h = {a.valores[k - 1]:g} y h = {a.valores[k]:g} €/h: la ruta cambia en "
                           f"h* ≈ {h_cruce:.2f} €/h (ahorra {A['horas'] - B['horas']:.2f} h y gasta "
                           f"{B['costo_total_eur'] - A['costo_total_eur']:.2f} € más en peajes y combustible)")
-    (salida / "valor_hora.md").write_text("\n".join(lineas) + "\n")
+    (salida / "valor_hora.md").write_text("\n".join(lineas) + "\n", encoding="utf-8")
     print("\n".join(lineas))
 
     cambios = [r["valor_hora"] for r in filas if r["aristas_distintas_vs_primero"] > 0]

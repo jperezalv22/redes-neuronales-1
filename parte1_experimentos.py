@@ -144,7 +144,7 @@ def guardar_tablas(filas, salida, a):
         lineas.append(
             f"| {r['funcion']} | {r['dim']} | {NOMBRES[r['metodo']]} | {r['media']:.2e} | {r['desv']:.2e} | "
             f"{r['mejor']:.2e} | {r['peor']:.2e} | {r['exito_%']:.0f} | {r['evals_f']:.0f} | {r['evals_grad']:.0f} |")
-    (salida / "tabla_resultados.md").write_text("\n".join(lineas) + "\n")
+    (salida / "tabla_resultados.md").write_text("\n".join(lineas) + "\n", encoding="utf-8")
 
 
 def graficar_convergencia(curvas, rejilla, a, salida):

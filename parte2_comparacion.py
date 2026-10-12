@@ -85,7 +85,7 @@ def main():
         lineas.append(f"| {r['configuracion']} | {r['media']:,.2f} | {r['desv']:,.2f} | {r['mejor']:,.2f} | "
                       f"{r['peor']:,.2f} | {r['brecha_media_%']:.2f} % | {r['veces_mejor_conocido']}/{a.corridas} | "
                       f"{r['segundos_por_corrida']} |")
-    (salida / "comparacion.md").write_text("\n".join(lineas) + "\n")
+    (salida / "comparacion.md").write_text("\n".join(lineas) + "\n", encoding="utf-8")
     print("\n".join(lineas))
 
 
