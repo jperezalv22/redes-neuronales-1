@@ -2,17 +2,17 @@
 
 - Valor de la hora: 15.00 €/h
 - Vehículo: SEAT León 2.0 TDI 85 kW (115 CV), 5 puertas, 2024 (4.6 l/100 km, 1.934 €/l)
-- Tiempo de cómputo: 2.8 s
+- Tiempo de cómputo: 4.8 s
 
 | Concepto | Valor |
 |---|---|
-| Distancia total | 6,583.0 km |
-| Tiempo de conducción | 82.02 h |
-| Costo del tiempo | 1,230.36 € |
-| Peajes | 67.39 € |
-| Combustible | 585.65 € |
-| **Costo total** | **1,883.39 €** |
+| Distancia total | 6,663.9 km |
+| Tiempo de conducción | 82.12 h |
+| Costo del tiempo | 1,231.79 € |
+| Peajes | 97.99 € |
+| Combustible | 592.85 € |
+| **Costo total** | **1,922.63 €** |
 
 Orden del recorrido:
 
-Zamora → Salamanca → Ávila → Segovia → Valladolid → Palencia → Burgos → Vitoria-Gasteiz → Logroño → Soria → Guadalajara → Madrid → Toledo → Ciudad Real → Badajoz → Cáceres → Cádiz → Sevilla → Huelva → Córdoba → Jaén → Granada → Málaga → Almería → Murcia → Alacant → Albacete → Cuenca → Teruel → València → Castelló de la Plana → Girona → Barcelona → Tarragona → Lleida → Huesca → Zaragoza → Pamplona → Donostia-San Sebastián → Bilbao → Santander → Oviedo → León → A Coruña → Lugo → Ourense → Pontevedra → Zamora
+Oviedo → León → Palencia → Burgos → Vitoria-Gasteiz → Bilbao → Santander → Donostia-San Sebastián → Pamplona → Logroño → Soria → Guadalajara → Madrid → Toledo → Ciudad Real → Albacete → Cuenca → Teruel → Zaragoza → Huesca → Lleida → Tarragona → Barcelona → Girona → Castelló de la Plana → València → Alacant → Murcia → Almería → Granada → Jaén → Córdoba → Málaga → Cádiz → Sevilla → Huelva → Badajoz → Cáceres → Salamanca → Zamora → Valladolid → Segovia → Ávila → Ourense → Lugo → A Coruña → Pontevedra → Oviedo

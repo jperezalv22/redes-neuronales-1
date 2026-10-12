@@ -2,17 +2,17 @@
 
 - Valor de la hora: 15.00 €/h
 - Vehículo: SEAT León 2.0 TDI 85 kW (115 CV), 5 puertas, 2024 (4.6 l/100 km, 1.934 €/l)
-- Tiempo de cómputo: 3.9 s
+- Tiempo de cómputo: 6.6 s
 
 | Concepto | Valor |
 |---|---|
-| Distancia total | 6,335.4 km |
-| Tiempo de conducción | 79.52 h |
-| Costo del tiempo | 1,192.80 € |
-| Peajes | 36.08 € |
-| Combustible | 563.62 € |
-| **Costo total** | **1,792.51 €** |
+| Distancia total | 6,263.9 km |
+| Tiempo de conducción | 78.83 h |
+| Costo del tiempo | 1,182.44 € |
+| Peajes | 60.27 € |
+| Combustible | 557.26 € |
+| **Costo total** | **1,799.97 €** |
 
 Orden del recorrido:
 
-Bilbao → Santander → Oviedo → A Coruña → Lugo → Pontevedra → Ourense → Zamora → León → Burgos → Palencia → Valladolid → Segovia → Ávila → Salamanca → Cáceres → Badajoz → Huelva → Sevilla → Cádiz → Córdoba → Jaén → Granada → Málaga → Almería → Murcia → Alacant → Albacete → Ciudad Real → Toledo → Madrid → Guadalajara → Cuenca → Teruel → València → Castelló de la Plana → Tarragona → Barcelona → Girona → Lleida → Huesca → Zaragoza → Soria → Logroño → Pamplona → Donostia-San Sebastián → Vitoria-Gasteiz → Bilbao
+Jaén → Córdoba → Ciudad Real → Albacete → Murcia → Alacant → València → Castelló de la Plana → Tarragona → Barcelona → Girona → Lleida → Huesca → Zaragoza → Teruel → Cuenca → Guadalajara → Madrid → Toledo → Ávila → Segovia → Valladolid → Palencia → Burgos → Soria → Logroño → Pamplona → Donostia-San Sebastián → Vitoria-Gasteiz → Bilbao → Santander → Oviedo → A Coruña → Pontevedra → Ourense → Lugo → León → Zamora → Salamanca → Cáceres → Badajoz → Huelva → Sevilla → Cádiz → Málaga → Almería → Granada → Jaén
