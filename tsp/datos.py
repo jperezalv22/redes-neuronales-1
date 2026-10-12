@@ -35,38 +35,43 @@ def cargar_ciudades():
 
 
 def tarifas_por_km():
-    """Euros por km de cada via de peaje.
+    """Tramos de pago de cada via: {via: [(lat_min, lat_max, euros_por_km), ...]}.
 
-    Para las vias con tarifa verificada se calcula importe / longitud.
-    Las demas usan el promedio de las verificadas.
+    La tarifa de cada tramo es importe / longitud oficial. Si la longitud
+    oficial no cuadra con la que da OSRM, la tarifa esta calibrada con el
+    precio de un viaje completo (columna eur_km_calibrado; ver fuente_longitud).
+    Las vias sin tarifa verificada usan el promedio de las demas.
+
+    Algunas vias son de pago solo en parte (la AP-7 tiene tres concesiones al
+    sur de Alicante, la AP-1 solo entre Eibar y Vitoria): esos tramos se
+    separan por latitud. Sin lat_min/lat_max, se paga toda la via.
     """
-    tarifas = {}
+    tramos = {}
     sin_dato = []
     with open(CARPETA / "peajes_tarifas.csv", encoding="utf-8") as f:
         for r in csv.DictReader(f):
-            if r["importe_ligeros_eur"]:
-                tarifas[r["via"]] = float(r["importe_ligeros_eur"]) / float(r["longitud_km_aprox"])
+            if r["eur_km_calibrado"]:
+                eur_km = float(r["eur_km_calibrado"])
+            elif r["importe_ligeros_eur"]:
+                eur_km = float(r["importe_ligeros_eur"]) / float(r["longitud_km"])
             else:
                 sin_dato.append(r["via"])
-    promedio = float(np.mean(list(tarifas.values())))
+                continue
+            lat_min = float(r["lat_min"]) if r["lat_min"] else -90.0
+            lat_max = float(r["lat_max"]) if r["lat_max"] else 90.0
+            tramos.setdefault(r["via"], []).append((lat_min, lat_max, eur_km))
+    promedio = float(np.mean([t[2] for lista in tramos.values() for t in lista]))
     for via in sin_dato:
-        tarifas[via] = promedio
-    return tarifas
+        tramos[via] = [(-90.0, 90.0, promedio)]
+    return tramos
 
 
-def es_tramo_de_peaje(via, lat):
-    """Decide si un tramo de via se paga.
-
-    La AP-7 y la AP-1 son de pago solo en algunos tramos, asi que usamos la
-    latitud del tramo para distinguirlos:
-      - AP-7: de pago solo al sur de Alicante (lat < 38.25).
-      - AP-1: de pago solo entre Vitoria y Eibar (lat > 42.8).
-    """
-    if via == "AP-7":
-        return lat < 38.25
-    if via == "AP-1":
-        return lat > 42.8
-    return True
+def tarifa_del_tramo(tramos, via, lat):
+    """Euros por km de un tramo de `via` a latitud `lat`, o 0 si ahi es libre."""
+    for lat_min, lat_max, eur_km in tramos[via]:
+        if lat_min <= lat < lat_max:
+            return eur_km
+    return 0.0
 
 
 def via_de_peaje(ref, nombre, tarifas):
@@ -95,9 +100,10 @@ def cargar_peajes(n):
     with open(CARPETA / "km_por_via.csv", encoding="utf-8") as f:
         for r in csv.DictReader(f):
             via = via_de_peaje(r["ref"], r["nombre"], tarifas)
-            if via and es_tramo_de_peaje(via, float(r["lat"])):
+            eur_km = tarifa_del_tramo(tarifas, via, float(r["lat"])) if via else 0.0
+            if eur_km > 0:
                 i, j, km = int(r["i"]), int(r["j"]), float(r["km"])
-                peaje[i, j] += km * tarifas[via]
+                peaje[i, j] += km * eur_km
                 km_peaje[i, j] += km
     # las rutas se descargaron solo para i < j: copiamos al otro lado
     return peaje + peaje.T, km_peaje + km_peaje.T

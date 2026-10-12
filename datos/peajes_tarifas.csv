@@ -1,21 +1,24 @@
-via,tramo_referencia,importe_ligeros_eur,longitud_km_aprox,fuente,fecha_consulta
-AP-68,Bilbao - Zaragoza,39.90,294,"Ministerio de Transportes, Peajes vigentes desde 01/01/2026 AP-68 (PDF)",2026-10-06
-AP-6,Villalba - Adanero,15.70,70,"Ministerio de Transportes, Peajes vigentes desde 01/01/2026 AP-6 (PDF)",2026-10-06
-AP-71,León - Astorga (tarifa diurna),6.20,38,"Ministerio de Transportes, Peajes vigentes desde 01/01/2026 AP-71 (PDF)",2026-10-06
-AP-53,Santiago - Alto de Santo Domingo,7.25,56,"Ministerio de Transportes, Peajes vigentes desde 01/01/2026 AP-53 (PDF)",2026-10-06
-AP-9,,,,"Sin tarifa por km verificada: se usa el promedio",
-AP-66,,,,"Sin tarifa por km verificada: se usa el promedio",
-AP-51,,,,"Sin tarifa por km verificada: se usa el promedio",
-AP-61,,,,"Sin tarifa por km verificada: se usa el promedio",
-AP-46,,,,"Sin tarifa por km verificada: se usa el promedio",
-AP-7,"Solo tramos al sur de Alicante (Alicante-Cartagena, Cartagena-Vera, Málaga-Guadiaro)",,,"Sin tarifa por km verificada: se usa el promedio",
-AP-36,,,,"Sin tarifa por km verificada: se usa el promedio (SEITT)",
-AP-41,,,,"Sin tarifa por km verificada: se usa el promedio (SEITT)",
-R-2,,,,"Sin tarifa por km verificada: se usa el promedio (SEITT)",
-R-3,,,,"Sin tarifa por km verificada: se usa el promedio (SEITT)",
-R-4,,,,"Sin tarifa por km verificada: se usa el promedio (SEITT)",
-R-5,,,,"Sin tarifa por km verificada: se usa el promedio (SEITT)",
-M-12,,,,"Sin tarifa por km verificada: se usa el promedio (SEITT)",
-AP-8,,,,"Autopista foral (Bizkaia/Gipuzkoa), no esta en el listado del Ministerio. Verificar",
-AP-1,"Solo tramo Vitoria - Eibar (el tramo Burgos - Armiñón es libre desde 2018)",,,"Autopista foral (Gipuzkoa/Álava). Verificar",
-AP-15,,,,"Autopista foral (Navarra). Verificar",
+via,tramo_referencia,importe_ligeros_eur,longitud_km,eur_km_calibrado,lat_min,lat_max,fuente,fuente_longitud,fecha_consulta,nota
+AP-68,Bilbao - Zaragoza,39.90,291.8,,,,"Ministerio de Transportes, tarifas 2026 AP-68 (PDF): https://cdn.transportes.gob.es/portal-web-transportes/carreteras/nuestrared/autopistaspeaje/peajes-actuales/autopista-ap-68%2C-bilbao---zaragoza-2026.pdf",es.wikipedia.org/wiki/AP-68,2026-10-11,Concesión hasta el 10/11/2026
+AP-6,Villalba - Adanero,15.70,,0.22953,,,"Abertis (Castellana), tarifas 2026 AP-6/AP-51/AP-61 (PDF): https://www.autopistas.com/wp-content/uploads/2025/12/26_004-Castellana-AP6_AP51_AP61-T26.pdf",Calibrado: 15.70 € / 68.4 km de AP-6 en la ruta Madrid - Valladolid de km_por_via.csv,2026-10-11,
+AP-61,San Rafael - Segovia,8.60,,0.13726,,,"Abertis (Castellana), tarifas 2026, mismo PDF: Villalba - Segovia 8.60 €",Calibrado: (8.60 € - 0.22953 €/km x 21.8 km de AP-6) / 26.2 km de AP-61 en la ruta Madrid - Segovia,2026-10-11,8.60 € es Villalba - Segovia (AP-6 + AP-61)
+AP-51,Villacastín - Ávila,11.85,,0.09921,,,"Abertis (Castellana), tarifas 2026, mismo PDF: Villalba - Ávila 11.85 €",Calibrado: (11.85 € - 0.22953 €/km x 41.6 km de AP-6) / 23.2 km de AP-51 en la ruta Madrid - Ávila,2026-10-11,11.85 € es Villalba - Ávila (AP-6 + AP-51)
+AP-71,León - Astorga (tarifa diurna),6.20,37.7,,,,"Abertis (Aulesa), tarifas 2026 AP-71 (PDF): https://www.autopistas.com/wp-content/uploads/2025/12/26_002-Aulesa-AP71-Leon-Astorga-T26.pdf",es.wikipedia.org/wiki/AP-71,2026-10-11,
+AP-53,Santiago - Alto de Santo Domingo,7.25,56.6,,,,"Acega, tarifas 2026: https://acega.es/tarifas/",es.wikipedia.org/wiki/AP-53 (ficha),2026-10-11,
+AP-9,Ferrol - Tui,28.10,219,,,,"Audasa, calculadora de tarifas 2026: https://www.audasa.es/la-autopista/tarifas-y-descuentos/","Audasa, historia: https://www.audasa.es/acerca-de-audasa/historia/ (219 km entre Ferrol y la frontera portuguesa)",2026-10-11,
+AP-66,Campomanes - León,16.20,78,,,,"Aucalsa, tarifas 2026: https://www.aucalsa.com/la-autopista/tarifas-y-descuentos/",es.wikipedia.org/wiki/AP-66,2026-10-11,
+AP-46,Alto de las Pedrizas - Málaga,6.60,25.2,,,,"Ministerio de Transportes, tarifas 2026 AP-46 (PDF): https://cdn.transportes.gob.es/portal-web-transportes/carreteras/nuestrared/autopistaspeaje/peajes-actuales/autopista-ap-46%2C-alto-de-las-pedrizas---malaga-2026.pdf",es.wikipedia.org/wiki/AP-46 (ficha),2026-10-11,Temporada alta (mayo a octubre)
+AP-7,Alicante - Cartagena,5.70,76,,37.62,38.28,"Ministerio de Transportes, tarifas 2026 AP-7 Alicante - Cartagena (PDF): https://cdn.transportes.gob.es/portal-web-transportes/carreteras/nuestrared/autopistaspeaje/peajes-actuales/autopista-ap-7%2C-alicante---cartagena-2026.pdf",mismo PDF (km 724 a 800),2026-10-11,Temporada baja (octubre)
+AP-7,Cartagena - Vera,10.15,99.04,,37.20,37.62,"SEITT, tarifas 2026 AP-7 Cartagena - Vera (PDF): https://cdn.transportes.gob.es/portal-web-seitt/media/document/tarifas_ap7cv_2026.pdf",SEITT: https://www.seitt.es/areas-negocio/autopistas/ap-7-cartagena-vera (99.04 km de peaje),2026-10-11,Telepeaje
+AP-7,Málaga - Guadiaro,12.00,105,,36.25,36.80,"Autopista del Sol, tarifas: https://www.autopistadelsol.com/es/tarifas-y-descuentos/tarifas/",Autopista del Sol: https://www.autopistadelsol.com/es/ (longitud 105 km),2026-10-11,Suma de las tres barreras troncales en temporada normal (5.70 + 3.85 + 2.45)
+AP-36,Ocaña - San Clemente,12.60,98.47,,,,"SEITT, tarifas 2026 AP-36 (PDF): https://cdn.transportes.gob.es/portal-web-seitt/media/document/tarifas_ap36_2026_v1.pdf",SEITT: https://www.seitt.es/areas-negocio/autopistas/ap-36 (123.2 km menos 24.73 km libres San Clemente - La Roda),2026-10-11,Telepeaje
+AP-41,R-5 - Toledo,5.30,51.8,,,,"SEITT, tarifas 2026 AP-41 (PDF): https://cdn.transportes.gob.es/portal-web-seitt/media/document/precios_web_ap41_2026.pdf",SEITT: https://www.seitt.es/areas-negocio/autopistas/ap-41,2026-10-11,Telepeaje
+R-2,M-40 - Guadalajara,5.15,55.10,,,,"SEITT, tarifas 2026 R-2 (PDF): https://cdn.transportes.gob.es/portal-web-seitt/media/document/tarifas_r2_2026.pdf",SEITT: https://www.seitt.es/areas-negocio/autopistas/r-2 (55.10 km de peaje),2026-10-11,Telepeaje: 4.60 Ajalvir - Taracena + 0.55 barreras Aeropuerto/Alcobendas (suma nuestra)
+R-3,M-40 - enlace A-3,3.05,29.30,,,,"SEITT, tarifas 2026 R-3 (PDF): https://cdn.transportes.gob.es/portal-web-seitt/media/document/precios_web_r3_2026.pdf",SEITT: https://www.seitt.es/areas-negocio/autopistas/r-3,2026-10-11,Telepeaje
+R-4,M-50 - Ocaña,5.55,54.1,,,,"SEITT, tarifas 2026 R-4 (PDF): https://cdn.transportes.gob.es/portal-web-seitt/media/document/tarifas_r4_2026_1.pdf",SEITT: https://www.seitt.es/areas-negocio/autopistas/r-4,2026-10-11,Telepeaje
+R-5,M-40 - enlace A-5,3.25,31.50,,,,"SEITT, tarifas 2026 R-5 (PDF): https://cdn.transportes.gob.es/portal-web-seitt/media/document/precios_web_r5_2026.pdf",SEITT: https://www.seitt.es/areas-negocio/autopistas/r-5,2026-10-11,Telepeaje
+M-12,Acceso al aeropuerto,,,,,,Sin tarifa verificada: se usa el promedio de las demás,,,
+AP-8,Bilbao - Donostia,13.81,,0.28831,,,"Bidegi, tarifas 2026 AP-8/AP-1 (PDF; Acceso Oeste - Donostia, incluye el tramo de Bizkaia): https://www.bidegi.eus/documents/42696171/0/2026__AP-8_AP-1_AP-636_tarifak.pdf/0c9dbcf3-f3e7-e6f6-709b-8cbb7d9da9d5",Calibrado: 13.81 € / 47.9 km de AP-8 en la ruta Bilbao - Donostia (en OSM parte del tramo de Bizkaia figura como A-8),2026-10-11,
+AP-1,Eibar - Vitoria,10.04,,0.25547,42.80,43.25,"Bidegi, tarifas 2026 (Eibar - Vitoria), mismo PDF",Calibrado: 10.04 € / 39.3 km de AP-1 en la ruta Donostia - Vitoria,2026-10-11,El tramo Burgos - Armiñón es libre desde 2018
+AP-15,Pamplona - enlace AP-68,11.40,83.5,,,,"Audenasa, tarifas 2026 (BON 258 de 30/12/2025): https://www.audenasa.es/storage/Tarifas-2026-Recorrido.pdf",es.wikipedia.org/wiki/AP-15 (ficha: Tudela - Noáin 83.5 km),2026-10-11,Longitud dudosa: el mismo artículo da 99.1 y 112.15 km para otros recorridos
+C-32,Castelldefels - El Vendrell,6.47,,0.11616,,,"Abertis (Aucat), tarifas 2026 categoría I (PDF): https://www.autopistas.com/wp-content/uploads/2025/12/26_001-Aucat-C32-Castelldefels-Vendrell-T26.pdf",Calibrado: 6.47 € / 55.7 km de C-32 en la ruta Barcelona - Tarragona (incluye el tramo libre Barcelona - Castelldefels),2026-10-11,La C-32 del Maresme es libre desde 2021; en los datos solo aparece la C-32 sur

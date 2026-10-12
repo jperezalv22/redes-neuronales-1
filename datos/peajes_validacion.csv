@@ -1,0 +1,9 @@
+origen,destino,precio_oficial_eur,fuente,uso
+A Coruña,Pontevedra,16.35,Audasa 2026: A Coruña - Santiago 8.80 + Santiago - Pontevedra 7.55,validación
+Madrid,Segovia,8.60,Abertis Castellana 2026: Villalba - Segovia,calibración
+Madrid,Ávila,11.85,Abertis Castellana 2026: Villalba - Ávila,calibración
+Bilbao,Zaragoza,39.90,Ministerio de Transportes 2026: AP-68 recorrido completo,validación
+Bilbao,Logroño,19.60,Ministerio de Transportes 2026: AP-68 Bilbao - Logroño,validación
+Oviedo,León,16.20,Aucalsa 2026: AP-66 Campomanes - León,validación
+Bilbao,Donostia-San Sebastián,13.81,Bidegi 2026: Acceso Oeste - Donostia,calibración
+Barcelona,Tarragona,6.47,Aucat 2026 categoría I: Barcelona C-32 - El Vendrell,calibración
