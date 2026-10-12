@@ -185,22 +185,22 @@ La Tabla 2 resume de dónde sale cada dato. Todos están guardados en la carpeta
 | Coordenadas de las 47 capitales | `capitales.csv` | Nominatim (OpenStreetMap contributors, 2026) | 2026-10-06 |
 | Distancia y tiempo por carretera | `distancia_km.csv`, `tiempo_h.csv` | OSRM (Luxen y Vetter, 2011), servidor público, perfil de carro | 2026-10-06 |
 | Km por cada vía en cada ruta | `km_por_via.csv` | OSRM | 2026-10-06 |
-| Tarifas de peaje 2026 | `peajes_tarifas.csv` | Ministerio de Transportes y Movilidad Sostenible (2026) | 2026-10-06 |
+| Tarifas de peaje 2026 | `peajes_tarifas.csv` (una URL por vía) | Ministerio de Transportes y Movilidad Sostenible (2026), SEITT (2026) y las concesionarias | 2026-10-11 |
 | Vehículo | SEAT León 2.0 TDI 85 kW (115 CV), diésel, **4.6 l/100 km** (WLTP combinado) | km77.com (2024) | 2026-10-06 |
 | Precio del gasóleo | **1.934 €/l** (gasóleo de automoción con impuestos, España) | Comisión Europea (2026), Weekly Oil Bulletin, precios al 28/09/2026 | 2026-10-06 |
-| Valor de la hora | 15 €/h por defecto, estudiado entre 0 y 200 €/h | parámetro | — |
+| Valor de la hora | 15 €/h por defecto, estudiado entre 0 y 200 €/h. Como referencia, el coste laboral por hora en España fue 26.18 €/h en promedio y 22.20 €/h en el sector Comercio (2.º trimestre de 2026) | parámetro; referencia: INE (2026), Encuesta Trimestral de Coste Laboral | 2026-10-11 |
 
 *Fuente: elaboración propia.*
 
 **Peajes.** Esta fue la parte más difícil. Entre 2018 y 2021 se liberaron muchas autopistas (la AP-1 Burgos–Armiñón, la AP-4, la AP-7 al norte de Alicante, la AP-2...) y en 2026 se liberó la circunvalación de Alicante. Lo que hicimos fue:
 
 1. Pedir a OSRM la ruta de cada uno de los 1081 pares de ciudades, paso a paso. Cada paso trae el código de la vía (por ejemplo `AP-68`) y su longitud.
-2. Sumar los km que van por autopistas que siguen siendo de pago en 2026 según la lista del Ministerio. La AP-7 solo cuenta al sur de Alicante y la AP-1 solo entre Vitoria y Eibar.
-3. Multiplicar por una tarifa en €/km. Para la AP-68, AP-6, AP-71 y AP-53 la calculamos con el importe oficial del tramo completo para vehículos ligeros dividido entre su longitud (0.136, 0.224, 0.163 y 0.129 €/km). Para las demás usamos el promedio, 0.163 €/km.
+2. Sumar los km que van por autopistas que siguen siendo de pago en 2026. Las que solo cobran en parte se separan por latitud: la AP-7 tiene tres tramos de pago (Alicante–Cartagena, Cartagena–Vera y Málaga–Guadiaro) y la AP-1 solo cobra entre Eibar y Vitoria.
+3. Multiplicar por una tarifa en €/km: el importe oficial 2026 del recorrido completo para vehículos ligeros dividido entre la longitud oficial del tramo. Va de 0.075 €/km (AP-7 Alicante–Cartagena) a 0.288 €/km (AP-8). En seis vías (AP-6, AP-61, AP-51, AP-8, AP-1 y C-32) los km que da OSRM no cuadran con la longitud oficial, por cómo está etiquetada la vía en OpenStreetMap, así que calibramos la tarifa con el precio de un viaje completo (por ejemplo, 15.70 € Villalba–Adanero entre los 68.4 km de AP-6 de la ruta Madrid–Valladolid). Solo la M-12 queda con el promedio de las demás, porque no encontramos su tarifa.
 
-Como comprobación, el modelo da 39.79 € para Bilbao–Zaragoza (293 km por la AP-68), y la tabla oficial dice 39.90 €. Con este método, 561 de los 1081 trayectos pagan algo de peaje.
+**Validación.** Comparamos el peaje del modelo con el precio oficial de cuatro viajes que no usamos para calibrar (`python validar_peajes.py`): A Coruña–Pontevedra da 16.70 € contra 16.35 € (+2.1 %), Bilbao–Zaragoza 40.09 € contra 39.90 € (+0.5 %), Oviedo–León 15.85 € contra 16.20 € (−2.2 %) y Bilbao–Logroño 17.35 € contra 19.60 € (−11.5 %). El último error se debe a que la AP-68 no cobra lo mismo por km en todos sus tramos, y nosotros usamos una tarifa media. Con este método, 576 de los 1081 trayectos pagan algo de peaje.
 
-Las limitaciones están documentadas en el README: las longitudes de los tramos son aproximadas, OSRM siempre da la ruta más rápida sin mirar el peaje (no exploramos rutas alternativas sin peaje para cada par) y las tarifas de las autopistas forales del País Vasco y Navarra están por verificar. En el mapa dibujamos cada trayecto como una línea recta entre ciudades, aunque el costo usa la ruta real por carretera.
+Las limitaciones están documentadas en el README: usamos una tarifa por km constante en cada tramo, la longitud de la AP-15 es dudosa (las fuentes dan entre 83.5 y 112 km según el recorrido) y OSRM siempre da la ruta más rápida sin mirar el peaje (no exploramos rutas alternativas sin peaje para cada par). En el mapa dibujamos cada trayecto como una línea recta entre ciudades, aunque el costo usa la ruta real por carretera.
 
 ### 2.3 Métodos
 
@@ -224,26 +224,26 @@ y repite hasta que no haya mejora. En la colonia de hormigas aplicamos 2-opt al 
 
 ### 2.4 Resultados
 
-Con $h=15$ €/h, el mejor recorrido que encontramos cuesta **1 792.51 €** (Figura 7). Lo encontró el algoritmo genético con la semilla 2026. La colonia de hormigas, con la misma semilla, se quedó en 1 803.25 € (0.6 % más caro), pero con otras semillas también llega a 1 792.51 € (Tabla 4). La Tabla 3 muestra el desglose del mejor recorrido.
+Con $h=15$ €/h, el mejor recorrido que encontramos cuesta **1 799.54 €**. Lo encontraron las dos metaheurísticas con 2-opt, en varias de las 10 corridas (Tabla 4). Con la semilla 2026, el genético llegó a 1 799.97 € (Figura 7), solo 0.43 € más, y la colonia de hormigas a 1 801.56 €. La Tabla 3 muestra el desglose del recorrido de la Figura 7.
 
-**Tabla 3.** Desglose del mejor recorrido encontrado con $h=15$ €/h.
+**Tabla 3.** Desglose del recorrido del algoritmo genético con la semilla 2026 y $h=15$ €/h.
 
 | Concepto | Valor |
 |---|---|
-| Distancia total | 6 335.4 km |
-| Tiempo de conducción | 79.52 h |
-| Costo del tiempo | 1 192.80 € |
-| Peajes | 36.08 € |
-| Combustible | 563.62 € |
-| **Costo total** | **1 792.51 €** |
+| Distancia total | 6 263.9 km |
+| Tiempo de conducción | 78.83 h |
+| Costo del tiempo | 1 182.44 € |
+| Peajes | 60.27 € |
+| Combustible | 557.26 € |
+| **Costo total** | **1 799.97 €** |
 
 *Fuente: elaboración propia con `python parte2_tsp.py`.*
 
-Orden: Bilbao → Santander → Oviedo → A Coruña → Lugo → Pontevedra → Ourense → Zamora → León → Burgos → Palencia → Valladolid → Segovia → Ávila → Salamanca → Cáceres → Badajoz → Huelva → Sevilla → Cádiz → Córdoba → Jaén → Granada → Málaga → Almería → Murcia → Alacant → Albacete → Ciudad Real → Toledo → Madrid → Guadalajara → Cuenca → Teruel → València → Castelló de la Plana → Tarragona → Barcelona → Girona → Lleida → Huesca → Zaragoza → Soria → Logroño → Pamplona → Donostia-San Sebastián → Vitoria-Gasteiz → (Bilbao). Como el recorrido es cerrado, se puede empezar en cualquier ciudad.
+Orden: Jaén → Córdoba → Ciudad Real → Albacete → Murcia → Alacant → València → Castelló de la Plana → Tarragona → Barcelona → Girona → Lleida → Huesca → Zaragoza → Teruel → Cuenca → Guadalajara → Madrid → Toledo → Ávila → Segovia → Valladolid → Palencia → Burgos → Soria → Logroño → Pamplona → Donostia-San Sebastián → Vitoria-Gasteiz → Bilbao → Santander → Oviedo → A Coruña → Pontevedra → Ourense → Lugo → León → Zamora → Salamanca → Cáceres → Badajoz → Huelva → Sevilla → Cádiz → Málaga → Almería → Granada → (Jaén). Como el recorrido es cerrado, se puede empezar en cualquier ciudad.
 
 ![Figura 7](../resultados/parte2/ruta_ga.png)
 
-**Figura 7.** Mejor recorrido encontrado con $h=15$ €/h (algoritmo genético con 2-opt). *Fuente: elaboración propia; contorno de Natural Earth (s. f.).*
+**Figura 7.** Recorrido del algoritmo genético con 2-opt y la semilla 2026, con $h=15$ €/h. *Fuente: elaboración propia; contorno de Natural Earth (s. f.).*
 
 ![Figura 8](../resultados/parte2/sin_2opt/evolucion_aco.gif)
 
@@ -253,20 +253,20 @@ Orden: Bilbao → Santander → Oviedo → A Coruña → Lugo → Pontevedra →
 
 **Figura 9.** Evolución de la mejor solución del algoritmo genético sin 2-opt. *Fuente: elaboración propia.*
 
-**¿Es el óptimo?** No podemos demostrarlo, porque no resolvimos el problema con un método exacto. Lo que sí hicimos fue correr cada configuración 10 veces con semillas distintas (Tabla 4). El recorrido de 1 792.51 € apareció 4 de 10 veces con ACO + 2-opt y 7 de 10 con GA + 2-opt, y ninguna corrida encontró algo mejor. Eso nos da bastante confianza de que es el óptimo o está muy cerca.
+**¿Es el óptimo?** No podemos demostrarlo, porque no resolvimos el problema con un método exacto. Lo que sí hicimos fue correr cada configuración 10 veces con semillas distintas (Tabla 4). El recorrido de 1 799.54 € apareció 6 de 10 veces con ACO + 2-opt y 8 de 10 con GA + 2-opt, y ninguna corrida encontró algo mejor. Eso nos da bastante confianza de que es el óptimo o está muy cerca.
 
-**Tabla 4.** Costo final en 10 corridas por configuración ($h=15$ €/h). La brecha se mide contra el mejor costo encontrado (1 792.51 €).
+**Tabla 4.** Costo final en 10 corridas por configuración ($h=15$ €/h). La brecha se mide contra el mejor costo encontrado (1 799.54 €).
 
 | Configuración | Media (€) | Desv. (€) | Mejor (€) | Peor (€) | Brecha media | Veces que llega al mejor | s/corrida |
 |---|---|---|---|---|---|---|---|
-| ACO + 2-opt | 1 795.41 | 4.16 | 1 792.51 | 1 803.25 | 0.16 % | 4/10 | 3.2 |
-| ACO sin 2-opt | 1 876.73 | 18.92 | 1 841.46 | 1 899.88 | 4.70 % | 0/10 | 2.9 |
-| GA + 2-opt | 1 794.15 | 2.64 | 1 792.51 | 1 797.96 | 0.09 % | 7/10 | 4.0 |
-| GA sin 2-opt | 1 985.77 | 71.55 | 1 862.48 | 2 077.23 | 10.78 % | 0/10 | 1.4 |
+| ACO + 2-opt | 1 800.74 | 1.75 | 1 799.54 | 1 804.53 | 0.07 % | 6/10 | 4.6 |
+| ACO sin 2-opt | 1 895.34 | 20.86 | 1 861.94 | 1 922.63 | 5.32 % | 0/10 | 4.2 |
+| GA + 2-opt | 1 799.63 | 0.18 | 1 799.54 | 1 799.97 | 0.00 % | 8/10 | 5.3 |
+| GA sin 2-opt | 2 007.82 | 46.72 | 1 939.57 | 2 096.52 | 11.57 % | 0/10 | 1.8 |
 
 *Fuente: elaboración propia con `python parte2_comparacion.py`.*
 
-Sin 2-opt, la colonia de hormigas queda en promedio a 4.7 % del mejor y el genético a 10.8 %. La colonia de hormigas por sí sola es bastante mejor que el genético: su regla de construcción usa el costo de cada arista ($\eta_{ij}$), mientras que el cruce OX y la inversión no saben nada de costos y solo los "ven" a través de la selección. Con 2-opt los dos quedan a menos de 0.2 % en promedio. En la práctica, la búsqueda local hace la mayor parte del trabajo y la metaheurística le da buenos puntos de partida.
+Sin 2-opt, la colonia de hormigas queda en promedio a 5.3 % del mejor y el genético a 11.6 %. La colonia de hormigas por sí sola es bastante mejor que el genético: su regla de construcción usa el costo de cada arista ($\eta_{ij}$), mientras que el cruce OX y la inversión no saben nada de costos y solo los "ven" a través de la selección. Con 2-opt los dos quedan a menos de 0.1 % en promedio. En la práctica, la búsqueda local hace la mayor parte del trabajo y la metaheurística le da buenos puntos de partida.
 
 ### 2.5 ¿Cambia la ruta con el valor de la hora?
 
@@ -282,21 +282,21 @@ El óptimo para cada $h$ es la recta más baja, así que la ruta óptima solo ca
 
 | Valor hora (€/h) | km | horas | peajes (€) | combustible (€) | costo total (€) | aristas distintas |
 |---|---|---|---|---|---|---|
-| 0 | 6 379.3 | 80.75 | 22.79 | 567.53 | 590.32 | 0 |
-| 2.5 | 6 379.3 | 80.75 | 22.79 | 567.53 | 792.19 | 0 |
-| 5 | 6 379.3 | 80.75 | 22.79 | 567.53 | 994.05 | 0 |
-| 7.5 | 6 416.6 | 79.85 | 26.01 | 570.85 | 1 195.73 | 10 |
-| 10 | 6 335.4 | 79.52 | 36.08 | 563.62 | 1 394.91 | 10 |
-| 15 | 6 335.4 | 79.52 | 36.08 | 563.62 | 1 792.51 | 10 |
-| 20 | 6 242.3 | 78.32 | 67.66 | 555.34 | 2 189.49 | 15 |
-| 25 | 6 242.3 | 78.32 | 67.66 | 555.34 | 2 581.11 | 15 |
-| 30 | 6 247.0 | 78.05 | 74.97 | 555.76 | 2 972.24 | 15 |
-| 40 | 6 247.0 | 78.05 | 74.97 | 555.76 | 3 752.74 | 15 |
-| 50 | 6 247.0 | 78.05 | 74.97 | 555.76 | 4 533.25 | 15 |
-| 75 | 6 247.0 | 78.05 | 74.97 | 555.76 | 6 484.51 | 15 |
-| 100 | 6 247.0 | 78.05 | 74.97 | 555.76 | 8 435.77 | 15 |
-| 150 | 6 205.3 | 77.96 | 90.45 | 552.05 | 12 336.12 | 18 |
-| 200 | 6 205.3 | 77.96 | 90.45 | 552.05 | 16 234.00 | 18 |
+| 0 | 6 463.9 | 82.03 | 21.73 | 575.05 | 596.78 | 0 |
+| 2.5 | 6 363.4 | 80.27 | 31.56 | 566.11 | 798.36 | 14 |
+| 5 | 6 363.4 | 80.27 | 31.56 | 566.11 | 999.04 | 14 |
+| 7.5 | 6 363.4 | 80.27 | 31.56 | 566.11 | 1 199.72 | 14 |
+| 10 | 6 363.4 | 80.27 | 31.56 | 566.11 | 1 400.41 | 14 |
+| 15 | 6 315.5 | 79.30 | 48.48 | 561.85 | 1 799.77 | 13 |
+| 20 | 6 242.3 | 78.32 | 69.83 | 555.34 | 2 191.66 | 17 |
+| 25 | 6 242.3 | 78.32 | 69.83 | 555.34 | 2 583.29 | 17 |
+| 30 | 6 247.0 | 78.05 | 77.20 | 555.76 | 2 974.47 | 17 |
+| 40 | 6 247.0 | 78.05 | 77.20 | 555.76 | 3 754.98 | 17 |
+| 50 | 6 247.0 | 78.05 | 77.20 | 555.76 | 4 535.48 | 17 |
+| 75 | 6 247.0 | 78.05 | 77.20 | 555.76 | 6 486.74 | 17 |
+| 100 | 6 247.0 | 78.05 | 77.20 | 555.76 | 8 438.00 | 17 |
+| 150 | 6 205.3 | 77.96 | 94.74 | 552.05 | 12 340.41 | 19 |
+| 200 | 6 205.3 | 77.96 | 94.74 | 552.05 | 16 238.29 | 19 |
 
 *Fuente: elaboración propia con `python parte2_valor_hora.py`.*
 
@@ -306,11 +306,11 @@ La Tabla 6 da los valores exactos de $h$ en los que cambia la ruta, calculados c
 
 | Cambio | $h^*$ (€/h) | Horas ahorradas | Dinero extra (€) |
 |---|---|---|---|
-| 1.º | 7.30 | 0.90 | 6.54 |
-| 2.º | 8.65 | 0.33 | 2.85 |
-| 3.º | 19.48 | 1.20 | 23.29 |
-| 4.º | 28.20 | 0.27 | 7.73 |
-| 5.º | 126.68 | 0.09 | 11.77 |
+| 1.º | 0.51 | 1.75 | 0.89 |
+| 2.º | 12.95 | 0.98 | 12.66 |
+| 3.º | 15.28 | 0.97 | 14.85 |
+| 4.º | 28.42 | 0.27 | 7.78 |
+| 5.º | 148.85 | 0.09 | 13.83 |
 
 *Fuente: elaboración propia con `python parte2_valor_hora.py`.*
 
@@ -322,11 +322,11 @@ La Tabla 6 da los valores exactos de $h$ en los que cambia la ruta, calculados c
 
 **Figura 11.** Mejor recorrido con $h=0$ (solo dinero) y con $h=200$ €/h (casi solo tiempo). *Fuente: elaboración propia.*
 
-Así, **sí cambia la ruta**, y el primer cambio ocurre en $h^*\approx 7.3$ €/h. Por debajo de ese valor al vendedor le conviene el recorrido que paga solo 22.79 € de peajes. El cambio más grande ocurre en $h^*\approx 19.5$ €/h: se pagan 23.29 € más (sobre todo la AP-9 entre A Coruña y Pontevedra y la AP-7 entre Cádiz y Málaga) para ahorrar 1.2 h. Por encima de unos 30 €/h los cambios ya son muy pequeños (0.27 h y 0.09 h).
+Así, **sí cambia la ruta**. El primer cambio ocurre casi de inmediato, en $h^*\approx 0.5$ €/h: con $h=0$ solo cuenta el dinero, y basta darle un valor mínimo al tiempo para preferir un recorrido 1.75 h más rápido que cuesta apenas 0.89 € más (entran Vitoria–Donostia por la AP-1 y Cádiz–Málaga por la AP-7 de la Costa del Sol). Los cambios importantes están entre 13 y 15.3 €/h: en $h^*\approx 12.95$ €/h entran Zaragoza–Soria y Córdoba–Málaga (AP-46), y en $h^*\approx 15.28$ €/h entran A Coruña–Pontevedra (AP-9) y Barcelona–Tarragona (C-32). Cada uno de esos dos cambios ahorra casi 1 h a cambio de 13–15 €. Nuestro valor por defecto, 15 €/h, cae justo en esa franja, así que la ruta recomendada es sensible a ese parámetro. Por encima de unos 30 €/h los cambios ya son muy pequeños (0.27 h y 0.09 h).
 
-Como se ve en la Tabla 5, los cambios son pequeños en términos relativos: entre $h=0$ y $h=200$ el tiempo total baja solo 2.8 h (de 80.75 a 77.96 h), y los peajes pasan de 23 a 90 €. Esto tiene sentido porque los costos de tiempo y de combustible son casi proporcionales entre sí (los dos crecen con la distancia). Lo que realmente separa una ruta "barata" de una "rápida" son los pocos trayectos con autopistas de pago, que en 2026 son muchos menos que hace unos años. Comparando los dos recorridos de la Figura 11, 18 de los 47 trayectos cambian. Los que entran con $h=200$ y pagan peaje son A Coruña–Pontevedra (AP-9), León–Oviedo (AP-66), Lugo–León (AP-71), Madrid–Ávila (AP-6 y AP-51), Cádiz–Málaga (AP-7 de la Costa del Sol) y dos trayectos en el País Vasco. Justamente son las zonas donde siguen las autopistas de pago.
+Como se ve en la Tabla 5, los cambios son pequeños en términos relativos: entre $h=0$ y $h=200$ el tiempo total baja 4.1 h (de 82.03 a 77.96 h), y los peajes pasan de 22 a 95 €. Esto tiene sentido porque los costos de tiempo y de combustible son casi proporcionales entre sí (los dos crecen con la distancia). Lo que realmente separa una ruta "barata" de una "rápida" son los pocos trayectos con autopistas de pago, que en 2026 son muchos menos que hace unos años. Comparando los dos recorridos de la Figura 11, 19 de los 47 trayectos cambian. Los que entran con $h=200$ y pagan peaje son A Coruña–Pontevedra (AP-9), León–Oviedo (AP-66), Madrid–Ávila (AP-6 y AP-51), Vitoria–Donostia (AP-1), Cádiz–Málaga (AP-7), Lugo–León (AP-71), Córdoba–Málaga (AP-46) y Barcelona–Tarragona (C-32). Justamente son las zonas donde siguen las autopistas de pago.
 
-Hay que tener cuidado con los cambios pequeños. Los valores de $h^*$ los calculamos entre recorridos que encontraron los algoritmos, no entre todos los posibles. Una primera versión del estudio usaba solo la colonia de hormigas. Esa versión también encontró el primer cambio en 7.30 €/h, pero ubicó el cambio grande en 17.14 €/h, porque no había encontrado el recorrido de 79.52 h que sí encontró el genético. Para $h$ alto los recorridos también variaron un poco entre versiones (menos de 0.1 h de diferencia), así que el último cambio (126.68 €/h) puede deberse a que los algoritmos no encontraron antes ese recorrido. Lo que se mantiene es el patrón: un primer cambio cerca de 7 €/h, uno grande entre 17 y 20 €/h y cambios muy pequeños de ahí en adelante.
+Hay que tener cuidado con estos números por dos razones. Primero, los valores de $h^*$ los calculamos entre recorridos que encontraron los algoritmos, no entre todos los posibles, así que un cambio pequeño (como el de 148.85 €/h) puede deberse a que los algoritmos no encontraron antes ese recorrido. Segundo, dependen mucho de los datos de peaje. Una versión anterior de este estudio usaba tarifas sin verificar (16 de las 20 vías con un promedio de 0.163 €/km) y ubicaba los cambios en 7.30, 8.65 y 19.48 €/h. Al corregir las tarifas, los puntos de cambio se movieron varios €/h. Lo que se mantiene es el patrón: los cambios importantes están entre 10 y 20 €/h y casi no hay cambios por encima de 30 €/h.
 
 ---
 
@@ -334,9 +334,9 @@ Hay que tener cuidado con los cambios pequeños. Los valores de $h^*$ los calcul
 
 - En funciones continuas, el gradiente es muy eficiente cuando el problema es localmente convexo y bien condicionado, pero se estanca en el primer mínimo local (Rastrigin) y avanza muy despacio en valles mal condicionados (Rosenbrock). Su tasa de aprendizaje depende de la curvatura, y una tasa fija puede divergir en una parte del dominio y ser lenta en otra.
 - Con el mismo presupuesto de evaluaciones, evolución diferencial fue el método más confiable en las cuatro configuraciones. PSO fue rápido pero se estancó en algunos casos de 3D, y el GA de codificación real fue bueno en Rastrigin y malo en Rosenbrock.
-- En el TSP, la colonia de hormigas y el genético llegan al mismo recorrido (1 792.51 € con $h=15$ €/h) cuando se combinan con 2-opt. Sin búsqueda local, la colonia de hormigas es claramente mejor.
-- La ruta óptima depende del valor de la hora. El primer cambio ocurre cerca de 7.3 €/h y el más importante cerca de 19.5 €/h. Por encima de unos 30 €/h la ruta casi no cambia.
-- Obtener los datos fue tan difícil como optimizar: los peajes cambian cada año, las etiquetas de OpenStreetMap no siempre son consistentes y un resumen automático nos dio tarifas equivocadas.
+- En el TSP, la colonia de hormigas y el genético llegan al mismo recorrido (1 799.54 € con $h=15$ €/h) cuando se combinan con 2-opt. Sin búsqueda local, la colonia de hormigas es claramente mejor.
+- La ruta óptima depende del valor de la hora. Los cambios importantes ocurren entre 13 y 15.3 €/h, justo alrededor de nuestro valor por defecto. Por encima de unos 30 €/h la ruta casi no cambia.
+- Obtener los datos fue tan difícil como optimizar: los peajes cambian cada año, las etiquetas de OpenStreetMap no siempre son consistentes y la IA nos dio varias tarifas equivocadas. Corregir las tarifas movió los puntos de cambio de ruta varios €/h.
 
 ---
 
@@ -369,7 +369,7 @@ Estos son errores que aparecieron mientras desarrollábamos el trabajo con ayuda
 2. **Respuesta de la IA:** "AP-6 (Villalba-Adanero): 15,70 €; AP-66 (León-Campomanes): 9,20 €; AP-68 (Bilbao-Zaragoza): 39,90 €; AP-9 (Ferrol-Frontera Portuguesa): 21,30 €; **AP-71 (León-Astorga): 4,10 €**; **AP-53 (Santiago-Alto de Santo Domingo): 5,90 €**; AP-7 (Málaga-Guadiaro): 9,50 €".
 3. **Cómo lo sospechamos:** el resumen no citaba la tabla de donde sacaba cada número, y sabíamos que la AP-71 tiene tarifa diurna y nocturna, pero la respuesta daba un solo valor.
 4. **Evidencia:** descargamos los PDF oficiales del Ministerio de Transportes ("Peajes vigentes desde el día 01/01/2026"). AP-6 (15,70 €) y AP-68 (39,90 €) coinciden. Pero la AP-71 León-Astorga cuesta **6,20 € de día y 2,50 € de noche** para ligeros, y ninguno de los dos es 4,10 €. La AP-53 Santiago-Alto de Santo Domingo cuesta **7,25 €**, no 5,90 €.
-5. **Corrección:** en `datos/peajes_tarifas.csv` solo usamos importes leídos directamente de los PDF oficiales. Las autopistas que no pudimos verificar usan el promedio y quedan marcadas.
+5. **Corrección:** en `datos/peajes_tarifas.csv` solo usamos importes leídos directamente de los PDF oficiales. Después verificamos también las demás vías (ver los Hallazgos 5 a 7); solo la M-12 queda con el promedio.
 6. **Lección:** un resumen generado por IA puede mezclar números correctos con incorrectos en la misma lista, y que dos sean correctos no garantiza los demás. Hay que verificar cada número contra la fuente primaria.
 
 ### Hallazgo 2 (código): suponer que OSRM marca los tramos de peaje
@@ -399,25 +399,79 @@ Estos son errores que aparecieron mientras desarrollábamos el trabajo con ayuda
 5. **Corrección:** aplicar 2-opt a cada hijo con probabilidad 0,05 (`--prob-2opt`) y subir el torneo a 5. Con eso el GA llega también a 574,5.
 6. **Lección:** mirar la curva de convergencia y no solo el valor final. Un algoritmo que no mejora nunca después de la primera generación tiene un problema de diseño.
 
-### Hallazgo 5
+Los Hallazgos 5 a 7 salieron de verificar las tarifas de las 16 vías que usaban el promedio. Se los pedimos a un agente de investigación de Claude (Claude Code, con búsqueda web), siempre con el mismo prompt:
 
-<!-- COMPLETAR POR EL EQUIPO con un hallazgo propio. Se piden al menos cinco y
-al menos tres categorías (aquí ya hay datos, código y conceptos).
-Ideas para revisar: constantes de PSO, mínimo global y dominio de las funciones
-en lo que les responda una IA, referencias bibliográficas (que existan y que el
-DOI resuelva), afirmaciones sobre convergencia garantizada de GA/PSO/ACO. -->
+<details>
+<summary>Prompt literal de los Hallazgos 5 a 7</summary>
+
+```text
+Necesito datos del mundo real, con fuentes verificables, para un trabajo universitario (TSP en carro por las 47 capitales de provincia de la España peninsular). Hoy es 2026-10-11. Usa WebSearch/WebFetch. NO inventes nada: cada dato debe venir de una fuente que hayas abierto; si no encuentras algo, dilo. Este trabajo tiene una sección de "cacería de alucinaciones de IA", así que la precisión importa más que la completitud. Anota la URL exacta y la fecha de consulta (2026-10-11) de cada dato.
+
+1. PEAJES. Lista de autopistas de peaje que siguen siendo de pago en la España PENINSULAR en octubre de 2026 (muchas pasaron a gratuitas: AP-1, AP-2, AP-4, AP-7 norte/Cataluña/Valencia, C-32/C-33, etc.; verifica el estado actual, incluidas concesiones que vencían en 2024-2026 como AP-6/AP-51/AP-61, AP-68, AP-9, AP-66, AP-71, AP-53, AP-36, AP-41, R-2/R-3/R-4/R-5, M-12, AP-7 Alicante–Cartagena y Cartagena–Vera, AP-7 Málaga–Guadiaro, AP-46, AP-15/AP-8 y autopistas autonómicas del País Vasco, Navarra, Cataluña, Madrid, Galicia (AG-*), etc.). Para cada una que siga siendo de peaje: código de vía (ej. "AP-9"), tramo de pago (ciudades/km aproximados), tarifa para vehículo ligero (turismo) vigente en 2026 — idealmente precio por tramo y longitud del tramo, para sacar €/km — y la fuente oficial (BOE con la resolución de tarifas 2026, web de la concesionaria, Ministerio de Transportes). Indica también si algún tramo va a liberarse antes de fin de 2026. Si para alguna solo encuentras un €/km aproximado, márcalo como aproximado.
+
+2. VEHÍCULO. Un compacto de gasolina muy vendido en España en 2025-2026 (ej. SEAT León 1.5 TSI, Volkswagen Golf 1.5 TSI, Toyota Corolla gasolina si existe, Kia Ceed 1.0 T-GDi). Dame modelo y versión exactos, consumo combinado WLTP (L/100 km) y la fuente (ficha oficial del fabricante o la base de datos de consumo del IDAE, coches.idae.es). Una opción bien documentada vale más que varias dudosas.
+
+3. GASOLINA 95. Precio medio en España de la gasolina sin plomo 95 (con impuestos, €/L) lo más reciente posible (septiembre-octubre 2026): fuente oficial como el Weekly Oil Bulletin de la Comisión Europea o el Ministerio para la Transición Ecológica (Geoportal de gasolineras / boletín petrolero). Fecha del dato.
+
+4. VALOR DE LA HORA DEL VENDEDOR (benchmark). Datos oficiales para fijar el costo por hora de un vendedor/comercial en España: p. ej. INE Encuesta Trimestral de Coste Laboral (coste laboral por hora), Encuesta Anual de Estructura Salarial (ganancia media por hora, ocupación "comerciales/representantes" o sector comercio), salario mínimo interprofesional 2026 por hora (como cota inferior). Da 2-4 valores de referencia en €/h con fuente y año, para estudiar un rango.
+
+Devuelve un informe en español, compacto (máx. ~1000 palabras), con tablas: (a) peajes vigentes: vía | tramo | longitud km | tarifa ligero € | €/km | fuente | nota; (b) vehículo; (c) gasolina; (d) valores de la hora. Al final, una lista de "dudas / cosas que no pude verificar" y cualquier contradicción entre fuentes que encontraste (esas son útiles para la sección de alucinaciones).
+```
+
+</details>
+
+### Hallazgo 5 (datos del mundo real): tarifa de camiones en vez de la de turismo (C-32)
+
+1. **Prompt:** el de arriba, que pide "tarifa para vehículo ligero (turismo) vigente en 2026".
+2. **Respuesta de la IA:** "C-32 (Cataluña) | Barcelona–El Vendrell | 13,45 como máximo (cat. II)".
+3. **Cómo lo sospechamos:** pedimos la tarifa de turismo, y la propia respuesta dice "cat. II", que en las autopistas españolas es la categoría de vehículos pesados.
+4. **Evidencia:** en el PDF oficial de tarifas 2026 de Aucat (https://www.autopistas.com/wp-content/uploads/2025/12/26_001-Aucat-C32-Castelldefels-Vendrell-T26.pdf), la tabla "CATEGORÍA I" da **6,47 €** de Barcelona C-32 a El Vendrell. La IA copió el número de la tabla equivocada.
+5. **Corrección:** 6,47 € en `datos/peajes_tarifas.csv`.
+6. **Lección:** en tablas con varias categorías, comprobar en la fuente que la fila o columna corresponde al vehículo del problema.
+
+### Hallazgo 6 (datos del mundo real): un precio que no está en la fuente que se cita (R-4)
+
+1. **Prompt:** el mismo.
+2. **Respuesta de la IA:** "R-4 | M-50–Ocaña | 5,50 / 6,15", citando el PDF de tarifas 2026 de SEITT.
+3. **Cómo lo sospechamos:** le pedimos a un segundo agente que confirmara si cada precio correspondía al recorrido completo, y respondió que "5,50 € no aparece" en el PDF vigente.
+4. **Evidencia:** en el PDF de SEITT (https://cdn.transportes.gob.es/portal-web-seitt/media/document/tarifas_r4_2026_1.pdf), el máximo para ligeros, M-50 ↔ Ocaña, es **5,55 €** con telepeaje (6,25 € en efectivo).
+5. **Corrección:** 5,55 €.
+6. **Lección:** cuando la IA cita una fuente, abrir esa fuente y buscar el número exacto. Que diga "fuente: X" no garantiza que el dato esté en X.
+
+### Hallazgo 7 (datos del mundo real): tarifa de 2025 presentada como de 2026 (AP-36)
+
+1. **Prompt:** el mismo, que pide la tarifa "vigente en 2026".
+2. **Respuesta de la IA:** "AP-36 | Corral de Almaguer–San Clemente | 12,35 / 13,85", como tarifa de 2026.
+3. **Cómo lo sospechamos:** le pedimos a un segundo agente que verificara a qué recorrido correspondía ese precio en el PDF citado, y encontró en la web de SEITT una versión más reciente del documento.
+4. **Evidencia:** la web de SEITT enlaza ahora `tarifas_ap36_2026_v1.pdf` (https://cdn.transportes.gob.es/portal-web-seitt/media/document/tarifas_ap36_2026_v1.pdf), que da **12,60 € / 14,15 €**, un 2 % más. El PDF que usó la IA era una versión anterior. Para confundir más, el PDF vigente dice por error "en vigor desde 1/1/2025".
+5. **Corrección:** 12,60 €.
+6. **Lección:** fijarse en la versión del documento y en su fecha. El enunciado lo advierte: la información desactualizada es un riesgo real.
 
 ### Verificaciones que no encontraron errores
 
 - Gradientes analíticos de Rosenbrock y Rastrigin contra diferencias centrales en 100 puntos para $n=2,3,5$: error relativo máximo $\sim10^{-10}$ (`python pruebas.py`).
 - Mínimos globales: $f(1,\dots,1)=0$ en Rosenbrock y $f(\mathbf 0)=0$ en Rastrigin, con gradiente nulo (`pruebas.py`).
 - Contadores de evaluaciones: prueba con 11 evaluaciones de $f$ y 1 de $\nabla f$ en 3D, que debe dar 17 equivalentes (`pruebas.py`).
-- Peaje Bilbao-Zaragoza calculado por nuestro modelo: 39,79 €, contra 39,90 € de la tabla oficial de la AP-68.
+- Peajes calculados por nuestro modelo contra precios oficiales de viajes completos (`python validar_peajes.py`): Bilbao-Zaragoza 40,09 € contra 39,90 € de la tabla oficial de la AP-68; los demás resultados están en la sección 2.2.
 - Precio del gasóleo: un resumen de búsqueda daba 1,834 €/l (citando el Boletín Petrolero del 14/09/2026 a través de la prensa). No pudimos comprobar esa cifra en la fuente, así que usamos el archivo oficial más reciente del Weekly Oil Bulletin: 1 934,43 € por 1000 l (precios al 28/09/2026).
 
 ---
 
 ## Referencias
+
+Abertis Autopistas España. (2025). *Tarifas 2026* [Tablas de tarifas de la AP-6/AP-51/AP-61 (Castellana), la AP-71 (Aulesa) y la C-32 (Aucat)]. Recuperado el 11 de octubre de 2026, de https://www.autopistas.com
+
+Acega. (2026). *Tarifas* [AP-53]. Recuperado el 11 de octubre de 2026, de https://acega.es/tarifas/
+
+Aucalsa. (2026). *Tarifas y descuentos* [AP-66]. Recuperado el 11 de octubre de 2026, de https://www.aucalsa.com/la-autopista/tarifas-y-descuentos/
+
+Audasa. (2026). *Tarifas y descuentos* [AP-9]. Recuperado el 11 de octubre de 2026, de https://www.audasa.es/la-autopista/tarifas-y-descuentos/
+
+Audenasa. (2025). *Tarifas 2026 por recorrido* [AP-15]. Recuperado el 11 de octubre de 2026, de https://www.audenasa.es/storage/Tarifas-2026-Recorrido.pdf
+
+Autopista del Sol. (2026). *Tarifas* [AP-7 Málaga–Guadiaro]. Recuperado el 11 de octubre de 2026, de https://www.autopistadelsol.com/es/tarifas-y-descuentos/tarifas/
+
+Bidegi. (2026). *2026 AP-8, AP-1, AP-636 tarifak* [Tarifas de las autopistas de Gipuzkoa]. Recuperado el 11 de octubre de 2026, de https://www.bidegi.eus
 
 Clerc, M., & Kennedy, J. (2002). The particle swarm: Explosion, stability, and convergence in a multidimensional complex space. *IEEE Transactions on Evolutionary Computation, 6*(1), 58–73. https://doi.org/10.1109/4235.985692
 
@@ -437,6 +491,8 @@ Griewank, A., & Walther, A. (2008). *Evaluating derivatives: Principles and tech
 
 Holland, J. H. (1975). *Adaptation in natural and artificial systems*. University of Michigan Press.
 
+Instituto Nacional de Estadística. (2026). *Encuesta Trimestral de Coste Laboral (ETCL). Segundo trimestre de 2026* [Nota de prensa]. Recuperado el 11 de octubre de 2026, de https://www.ine.es/dyngs/Prensa/ETCL2T26.htm
+
 Jamil, M., & Yang, X.-S. (2013). A literature survey of benchmark functions for global optimisation problems. *International Journal of Mathematical Modelling and Numerical Optimisation, 4*(2), 150–194. https://doi.org/10.1504/IJMMNO.2013.055204
 
 Kennedy, J., & Eberhart, R. (1995). Particle swarm optimization. En *Proceedings of ICNN'95 – International Conference on Neural Networks* (Vol. 4, pp. 1942–1948). IEEE. https://doi.org/10.1109/ICNN.1995.488968
@@ -445,7 +501,7 @@ km77.com. (2024). *SEAT León 2.0 TDI 85 kW (115 CV) Style (2024): precio y fich
 
 Luxen, D., & Vetter, C. (2011). Real-time routing with OpenStreetMap data. En *Proceedings of the 19th ACM SIGSPATIAL International Conference on Advances in Geographic Information Systems* (pp. 513–516). ACM. https://doi.org/10.1145/2093973.2094062
 
-Ministerio de Transportes y Movilidad Sostenible. (2026). *Peajes vigentes desde el día 01/01/2026* [Tablas de tarifas de las autopistas AP-6, AP-9, AP-53, AP-68 y AP-71]. Recuperado el 6 de octubre de 2026, de https://www.transportes.gob.es/carreteras/nuestra-red/autopistas-de-peaje/peajes-actuales
+Ministerio de Transportes y Movilidad Sostenible. (2026). *Peajes vigentes desde el día 01/01/2026* [Tablas de tarifas de las autopistas AP-6, AP-7 Alicante–Cartagena, AP-9, AP-46, AP-53, AP-68 y AP-71]. Recuperado el 6 y el 11 de octubre de 2026, de https://www.transportes.gob.es/carreteras/nuestra-red/autopistas-de-peaje/peajes-actuales
 
 Natural Earth. (s. f.). *Admin 0 – Countries* (escala 1:50m) [Datos geográficos]. Recuperado el 6 de octubre de 2026, de https://www.naturalearthdata.com
 
@@ -456,5 +512,7 @@ OpenStreetMap contributors. (2026). *Nominatim* [Servicio de geocodificación]. 
 Rastrigin, L. A. (1974). *Systems of extremal control*. Nauka.
 
 Rosenbrock, H. H. (1960). An automatic method for finding the greatest or least value of a function. *The Computer Journal, 3*(3), 175–184. https://doi.org/10.1093/comjnl/3.3.175
+
+Sociedad Estatal de Infraestructuras del Transporte Terrestre. (2026). *Tarifas 2026* [AP-7 Cartagena–Vera, AP-36, AP-41, R-2, R-3, R-4 y R-5]. Recuperado el 11 de octubre de 2026, de https://www.seitt.es
 
 Storn, R., & Price, K. (1997). Differential evolution – A simple and efficient heuristic for global optimization over continuous spaces. *Journal of Global Optimization, 11*(4), 341–359. https://doi.org/10.1023/A:1008202821328
