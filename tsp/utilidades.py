@@ -21,18 +21,31 @@ def dos_opt(ruta, C):
     """
     ruta = np.array(ruta)
     n = len(ruta)
+    # pares (i, j) validos: j >= i + 2, y para i = 0 no se toma j = n - 1
+    # (esas dos aristas son vecinas). Los demas quedan en +inf.
+    invalido = ~np.triu(np.ones((n, n), dtype=bool), 2)
+    invalido[0, n - 1] = True
+
     mejoro = True
     while mejoro:
         mejoro = False
-        for i in range(n - 2):
-            a, b = ruta[i], ruta[i + 1]
-            # todos los j posibles a la vez (con numpy) en lugar de un for
-            j = np.arange(i + 2, n if i > 0 else n - 1)
-            c, d = ruta[j], ruta[(j + 1) % n]
-            delta = C[a, c] + C[b, d] - C[a, b] - C[c, d]
-            k = np.argmin(delta)
-            if delta[k] < -1e-9:
-                jk = j[k]
-                ruta[i + 1 : jk + 1] = ruta[i + 1 : jk + 1][::-1]
-                mejoro = True
+        i = 0
+        while i < n - 2:
+            # delta[i, j] de las filas i..n-3 a la vez. Mientras no haya mejora
+            # la ruta no cambia, asi que estas filas sirven para todos los i que
+            # siguen: solo se recalculan despues de invertir un pedazo.
+            sig = np.roll(ruta, -1)
+            ab = C[ruta, sig]  # costo de la arista que sale de cada posicion
+            f = slice(i, n - 2)
+            delta = C[np.ix_(ruta[f], ruta)] + C[np.ix_(sig[f], sig)] - ab[f, None] - ab[None, :]
+            delta[invalido[f]] = np.inf
+            filas = np.flatnonzero(delta.min(axis=1) < -1e-9)
+            if len(filas) == 0:
+                break
+            k = filas[0]
+            i += k
+            jk = np.argmin(delta[k])
+            ruta[i + 1 : jk + 1] = ruta[i + 1 : jk + 1][::-1]
+            mejoro = True
+            i += 1
     return list(ruta)
