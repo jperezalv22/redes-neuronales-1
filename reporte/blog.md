@@ -2,12 +2,12 @@
 title: "Gradientes, enjambres y hormigas: de Rosenbrock a recorrer España en carro"
 curso: Redes neuronales y algoritmos bioinspirados, UNAL 2026-02
 autores: "<nombres del equipo>"
-repositorio: "<enlace al repositorio Git>"
+repositorio: "https://github.com/srodriguezsu/redes-neuronales-1"
 ---
 
 # Gradientes, enjambres y hormigas: de Rosenbrock a recorrer España en carro
 
-**Repositorio:** <enlace al repositorio Git>
+**Repositorio:** [https://github.com/srodriguezsu/redes-neuronales-1](https://github.com/srodriguezsu/redes-neuronales-1)
 
 En este trabajo comparamos métodos de optimización que usan el gradiente con métodos metaheurísticos que solo evalúan la función. Primero lo hacemos con dos funciones de prueba clásicas, Rosenbrock y Rastrigin. Después pasamos a un problema combinatorio real: el recorrido más barato en carro por las 47 capitales de provincia de la España peninsular.
 
@@ -58,6 +58,12 @@ Usamos $\eta=10^{-3}$ y un punto inicial uniforme en el dominio. Se detiene si $
 **Algoritmo genético (GA)** con codificación real (Holland, 1975; Goldberg, 1989). En cada generación: selección por torneo de tamaño 3, cruce BLX-$\alpha$ con $\alpha=0.5$ y probabilidad 0.9, y mutación gaussiana por gen con probabilidad 0.1 y $\sigma = 0.1\times$(ancho del dominio). Con elitismo de 1 individuo y población de 30. En el cruce BLX-$\alpha$ cada gen del hijo es
 
 $$h_j \sim U\big[\min(p_{1j},p_{2j}) - \alpha d_j,\ \max(p_{1j},p_{2j}) + \alpha d_j\big],\quad d_j=|p_{1j}-p_{2j}|.$$
+
+Cada padre sale de un torneo: se toman $k=3$ índices al azar $I=\{i_1,i_2,i_3\}$ y gana $\arg\min_{i\in I} f(\mathbf{x}_i)$. Después, cada gen del hijo muta con probabilidad $p_m=0.1$:
+
+$$h_j \leftarrow h_j + \varepsilon_j,\qquad \varepsilon_j\sim\mathcal{N}(0,\sigma^2),\quad \sigma = 0.1\,(u-l),$$
+
+donde $[l,u]$ es el dominio de cada coordenada.
 
 **Optimización por enjambre de partículas (PSO)** (Kennedy y Eberhart, 1995) con peso de inercia:
 
@@ -142,13 +148,17 @@ Todos los métodos tienen el mismo presupuesto: **10 000 evaluaciones equivalent
 
 **Figura 6.** PSO en Rosenbrock 2D. *Fuente: elaboración propia.*
 
+![Figura 7](../resultados/parte1/anim_rastrigin_de.gif)
+
+**Figura 7.** Evolución diferencial en Rastrigin 2D (semilla 2): la población pasa de estar repartida por todo el dominio a concentrarse en el origen. *Fuente: elaboración propia con `python parte1_animacion.py --funcion rastrigin --metodo de`.*
+
 ### 1.5 Discusión
 
-**Rosenbrock: un solo mínimo, pero mal condicionado.** Como se ve en la Figura 3, GD baja muy rápido hasta el fondo del valle en unas pocas iteraciones y después avanza muy despacio por él. La razón es el condicionamiento: el paso estable lo fija la dirección empinada ($\eta<2/\lambda_{\max}$), y con ese paso el avance en la dirección plana es de orden $\eta\lambda_{\min}\approx 4\times10^{-4}$ por iteración. Por eso, después de ~2000 gradientes en 2D, la media sigue en $3.7\times10^{-2}$ y solo 1 de 30 corridas cumple el umbral (Tabla 1). En 3D pasó algo peor: 2 de las 30 corridas divergieron en menos de 10 iteraciones porque empezaron en zonas donde $\lambda_{\max}$ es mucho mayor que cerca del mínimo, y el mismo $\eta$ ya no es estable. Esas dos corridas son las que inflan la media a 218. Así, el tamaño de paso de GD depende de la geometría y no hay uno bueno para todo el dominio.
+**Rosenbrock: un solo mínimo, pero mal condicionado.** Como se ve en la Figura 3, GD baja muy rápido hasta el fondo del valle en unas pocas iteraciones y después avanza muy despacio por él. La razón es el condicionamiento: el paso estable lo fija la dirección empinada ($\eta<2/\lambda_{\max}$), y con ese paso el avance en la dirección plana es de orden $\eta\lambda_{\min}\approx 4\times10^{-4}$ por iteración. Por eso, después de ~2000 gradientes en 2D, la media sigue en $3.7\times10^{-2}$ y solo 1 de 30 corridas cumple el umbral (Tabla 1). En 3D pasó algo peor: 2 de las 30 corridas divergieron en menos de 10 iteraciones porque empezaron en zonas donde $\lambda_{\max}$ es mucho mayor que cerca del mínimo, y el mismo $\eta$ ya no es estable. Esas dos corridas son las que inflan la media a 218; son los dos puntos aislados cerca de $10^3$ en el panel de Rosenbrock 3D de la Figura 2. Así, el tamaño de paso de GD depende de la geometría y no hay uno bueno para todo el dominio.
 
-Entre las metaheurísticas, DE fue la mejor: llegó al cero de máquina en 2D en ~3500 evaluaciones y en 3D en ~7000 (Figura 1). El vector diferencia $\mathbf{x}_{r_2}-\mathbf{x}_{r_3}$ se alinea solo con el valle, porque los individuos se reparten a lo largo de él, y eso le da pasos en la dirección correcta sin calcular ninguna derivada. PSO funcionó muy bien en 2D y mucho peor en 3D (17 % de éxito). El GA con BLX y mutación gaussiana fue el más débil en Rosenbrock: su mutación no tiene ninguna dirección preferida y el valle es muy estrecho.
+Entre las metaheurísticas, DE fue la mejor: llegó al cero de máquina en 2D en ~3500 evaluaciones y en 3D en ~7000 (Figura 1). El vector diferencia $\mathbf{x}_{r_2}-\mathbf{x}_{r_3}$ se alinea solo con el valle, porque los individuos se reparten a lo largo de él, y eso le da pasos en la dirección correcta sin calcular ninguna derivada. PSO funcionó muy bien en 2D y mucho peor en 3D (17 % de éxito). En 2D, como se observa en la Figura 6, el enjambre no necesita recorrer el valle: hacia la iteración 30 ya está agrupado alrededor de $(1,1)$ y desde ahí solo afina. El GA con BLX y mutación gaussiana fue el más débil en Rosenbrock: su mutación no tiene ninguna dirección preferida y el valle es muy estrecho.
 
-**Rastrigin: muchos mínimos locales.** Aquí GD no tiene opción. Con $\eta=10^{-3}$ el paso máximo es $\eta\cdot\max|\partial f/\partial x_i|\approx 0.07$, que no alcanza para saltar de un hueco a otro, así que converge al mínimo local del hueco donde empezó en unas 50 iteraciones (Figura 4) y se detiene porque el gradiente se anula. Usó solo unas 250 evaluaciones equivalentes en 2D (370 en 3D) de las 10 000. Las 2 corridas exitosas en 2D fueron las que empezaron, por suerte, dentro de la cuenca del origen ($|x_i|<0.5$; puntos iniciales $(-0.135, 0.339)$ y $(0.034, -0.194)$). La probabilidad de que eso pase es de alrededor de $(1/10.24)^2\approx 1\%$ en 2D. Los tres métodos de población resolvieron Rastrigin 2D en el 100 % de las corridas. En 3D, PSO falló en 6 de 30 corridas, quedando en $f\approx 0.995$ o $1.99$, que son los mínimos locales vecinos al origen (una o dos coordenadas en $\pm1$). El GA, que sufrió en Rosenbrock, aquí fue de los mejores: su mutación grande le permite saltar entre huecos.
+**Rastrigin: muchos mínimos locales.** Aquí GD no tiene opción. Con $\eta=10^{-3}$ el paso máximo es $\eta\cdot\max|\partial f/\partial x_i|\approx 0.07$, que no alcanza para saltar de un hueco a otro, así que converge al mínimo local del hueco donde empezó en unas 50 iteraciones (Figura 4) y se detiene porque el gradiente se anula. Usó solo unas 250 evaluaciones equivalentes en 2D (370 en 3D) de las 10 000. Las 2 corridas exitosas en 2D fueron las que empezaron, por suerte, dentro de la cuenca del origen ($|x_i|<0.5$; puntos iniciales $(-0.135, 0.339)$ y $(0.034, -0.194)$). La probabilidad de que eso pase es de alrededor de $(1/10.24)^2\approx 1\%$ en 2D. Los tres métodos de población resolvieron Rastrigin 2D en el 100 % de las corridas. La Figura 5 muestra cómo el enjambre de PSO explora varios huecos antes de concentrarse en el origen, y la Figura 7 muestra lo mismo con DE: al principio la población está dispersa, los vectores diferencia $\mathbf{x}_{r_2}-\mathbf{x}_{r_3}$ son grandes y los saltos pasan por encima de los mínimos locales; a medida que la población se agrupa, los saltos se achican solos y DE termina afinando dentro de la cuenca del origen. En 3D, PSO falló en 6 de 30 corridas, quedando en $f\approx 0.995$ o $1.99$, que son los mínimos locales vecinos al origen (una o dos coordenadas en $\pm1$); son los puntos aislados del panel de Rastrigin 3D en la Figura 2. El GA, que sufrió en Rosenbrock, aquí fue de los mejores: su mutación grande le permite saltar entre huecos.
 
 **¿Qué aportó cada familia?**
 
@@ -185,10 +195,10 @@ La Tabla 2 resume de dónde sale cada dato. Todos están guardados en la carpeta
 | Coordenadas de las 47 capitales | `capitales.csv` | Nominatim (OpenStreetMap contributors, 2026) | 2026-10-06 |
 | Distancia y tiempo por carretera | `distancia_km.csv`, `tiempo_h.csv` | OSRM (Luxen y Vetter, 2011), servidor público, perfil de carro | 2026-10-06 |
 | Km por cada vía en cada ruta | `km_por_via.csv` | OSRM | 2026-10-06 |
-| Tarifas de peaje 2026 | `peajes_tarifas.csv` (una URL por vía) | Ministerio de Transportes y Movilidad Sostenible (2026), SEITT (2026) y las concesionarias | 2026-10-11 |
+| Tarifas de peaje 2026 | `peajes_tarifas.csv` (una URL por vía) | Ministerio de Transportes y Movilidad Sostenible (2026a, 2026b, 2026c), Sociedad Estatal de Infraestructuras del Transporte Terrestre [SEITT] (2026) y las concesionarias: Abertis Autopistas España (2025), Acega (2026), Aucalsa (2026), Audasa (2026), Audenasa (2025), Autopista del Sol (2026) y Bidegi (2026) | 2026-10-11 |
 | Vehículo | SEAT León 2.0 TDI 85 kW (115 CV), diésel, **4.6 l/100 km** (WLTP combinado) | km77.com (2024) | 2026-10-06 |
 | Precio del gasóleo | **1.934 €/l** (gasóleo de automoción con impuestos, España) | Comisión Europea (2026), Weekly Oil Bulletin, precios al 28/09/2026 | 2026-10-06 |
-| Valor de la hora | 15 €/h por defecto, estudiado entre 0 y 200 €/h. Como referencia, el coste laboral por hora en España fue 26.18 €/h en promedio y 22.20 €/h en el sector Comercio (2.º trimestre de 2026) | parámetro; referencia: INE (2026), Encuesta Trimestral de Coste Laboral | 2026-10-11 |
+| Valor de la hora | 15 €/h por defecto, estudiado entre 0 y 200 €/h. Como referencia, el coste laboral por hora en España fue 26.18 €/h en promedio y 22.20 €/h en el sector Comercio (2.º trimestre de 2026) | parámetro; referencia: Instituto Nacional de Estadística [INE] (2026), Encuesta Trimestral de Coste Laboral | 2026-10-11 |
 
 *Fuente: elaboración propia.*
 
@@ -216,6 +226,16 @@ Usamos $m=30$, $\alpha=1$, $\beta=3$, $\rho=0.1$, $Q=1$, 150 iteraciones y ferom
 
 **Algoritmo genético con permutaciones.** Cada individuo es un recorrido. Usamos selección por torneo de tamaño 5, cruce OX (*order crossover*; Davis, 1985) con probabilidad 0.9, mutación por inversión de un segmento con probabilidad 0.3, elitismo de 2 individuos, población de 100 y 300 generaciones. El cruce OX copia un segmento del primer padre y completa el resto de ciudades en el orden en que aparecen en el segundo, así que el hijo siempre es una permutación válida.
 
+En símbolos, sean $\pi^1$ y $\pi^2$ los padres, ganadores de torneos de $k=5$ individuos distintos ($\arg\min_{i\in I} L(\pi^i)$, igual que en la Parte 1). Se escogen dos posiciones al azar $a<b$ y el hijo $h$ es
+
+$$h_{a..b} = \pi^1_{a..b},\qquad (h_{b+1},\dots,h_N,h_1,\dots,h_{a-1}) = \big(\pi^2 \setminus \{\pi^1_a,\dots,\pi^1_b\}\big),$$
+
+donde $\pi^2\setminus S$ es la lista de ciudades de $\pi^2$ que no están en $S$, en el orden en que aparecen en $\pi^2$. La mutación por inversión escoge otras dos posiciones $a<b$ y voltea el segmento:
+
+$$\pi' = (\pi_1,\dots,\pi_{a-1},\ \pi_b,\pi_{b-1},\dots,\pi_a,\ \pi_{b+1},\dots,\pi_N).$$
+
+Con elitismo, los 2 mejores recorridos pasan sin cambios a la siguiente generación.
+
 **Búsqueda local 2-opt** (Croes, 1958). Quita dos aristas $(a,b)$ y $(c,d)$ y reconecta como $(a,c)$ y $(b,d)$, que equivale a invertir el tramo entre $b$ y $c$. Acepta el cambio si
 
 $$\Delta = C_{ac}+C_{bd}-C_{ab}-C_{cd} < 0,$$
@@ -224,7 +244,7 @@ y repite hasta que no haya mejora. En la colonia de hormigas aplicamos 2-opt al 
 
 ### 2.4 Resultados
 
-Con $h=15$ €/h, el mejor recorrido que encontramos cuesta **1 799.54 €**. Lo encontraron las dos metaheurísticas con 2-opt, en varias de las 10 corridas (Tabla 4). Con la semilla 2026, el genético llegó a 1 799.97 € (Figura 7), solo 0.43 € más, y la colonia de hormigas a 1 801.56 €. La Tabla 3 muestra el desglose del recorrido de la Figura 7.
+Con $h=15$ €/h, el mejor recorrido que encontramos cuesta **1 799.54 €**. Lo encontraron las dos metaheurísticas con 2-opt, en varias de las 10 corridas (Tabla 4). Con la semilla 2026, el genético llegó a 1 799.97 € (Figura 8), solo 0.43 € más, y la colonia de hormigas a 1 801.56 €. La Tabla 3 muestra el desglose del recorrido de la Figura 8.
 
 **Tabla 3.** Desglose del recorrido del algoritmo genético con la semilla 2026 y $h=15$ €/h.
 
@@ -241,17 +261,17 @@ Con $h=15$ €/h, el mejor recorrido que encontramos cuesta **1 799.54 €**. Lo
 
 Orden: Jaén → Córdoba → Ciudad Real → Albacete → Murcia → Alacant → València → Castelló de la Plana → Tarragona → Barcelona → Girona → Lleida → Huesca → Zaragoza → Teruel → Cuenca → Guadalajara → Madrid → Toledo → Ávila → Segovia → Valladolid → Palencia → Burgos → Soria → Logroño → Pamplona → Donostia-San Sebastián → Vitoria-Gasteiz → Bilbao → Santander → Oviedo → A Coruña → Pontevedra → Ourense → Lugo → León → Zamora → Salamanca → Cáceres → Badajoz → Huelva → Sevilla → Cádiz → Málaga → Almería → Granada → (Jaén). Como el recorrido es cerrado, se puede empezar en cualquier ciudad.
 
-![Figura 7](../resultados/parte2/ruta_ga.png)
+![Figura 8](../resultados/parte2/ruta_ga.png)
 
-**Figura 7.** Recorrido del algoritmo genético con 2-opt y la semilla 2026, con $h=15$ €/h. *Fuente: elaboración propia; contorno de Natural Earth (s. f.).*
+**Figura 8.** Recorrido del algoritmo genético con 2-opt y la semilla 2026, con $h=15$ €/h. *Fuente: elaboración propia; contorno de Natural Earth (s. f.).*
 
-![Figura 8](../resultados/parte2/sin_2opt/evolucion_aco.gif)
+![Figura 9](../resultados/parte2/sin_2opt/evolucion_aco.gif)
 
-**Figura 8.** Evolución de la mejor solución de la colonia de hormigas sin 2-opt: cada cuadro es una mejora. *Fuente: elaboración propia con `python parte2_tsp.py --sin-2opt --gif`.*
+**Figura 9.** Evolución de la mejor solución de la colonia de hormigas sin 2-opt: cada cuadro es una mejora. *Fuente: elaboración propia con `python parte2_tsp.py --sin-2opt --gif`.*
 
-![Figura 9](../resultados/parte2/sin_2opt/evolucion_ga.gif)
+![Figura 10](../resultados/parte2/sin_2opt/evolucion_ga.gif)
 
-**Figura 9.** Evolución de la mejor solución del algoritmo genético sin 2-opt. *Fuente: elaboración propia.*
+**Figura 10.** Evolución de la mejor solución del algoritmo genético sin 2-opt. *Fuente: elaboración propia.*
 
 **¿Es el óptimo?** No podemos demostrarlo, porque no resolvimos el problema con un método exacto. Lo que sí hicimos fue correr cada configuración 10 veces con semillas distintas (Tabla 4). El recorrido de 1 799.54 € apareció 6 de 10 veces con ACO + 2-opt y 8 de 10 con GA + 2-opt, y ninguna corrida encontró algo mejor. Eso nos da bastante confianza de que es el óptimo o está muy cerca.
 
@@ -266,7 +286,7 @@ Orden: Jaén → Córdoba → Ciudad Real → Albacete → Murcia → Alacant �
 
 *Fuente: elaboración propia con `python parte2_comparacion.py`.*
 
-Sin 2-opt, la colonia de hormigas queda en promedio a 5.3 % del mejor y el genético a 11.6 %. La colonia de hormigas por sí sola es bastante mejor que el genético: su regla de construcción usa el costo de cada arista ($\eta_{ij}$), mientras que el cruce OX y la inversión no saben nada de costos y solo los "ven" a través de la selección. Con 2-opt los dos quedan a menos de 0.1 % en promedio. En la práctica, la búsqueda local hace la mayor parte del trabajo y la metaheurística le da buenos puntos de partida.
+Sin 2-opt, la colonia de hormigas queda en promedio a 5.3 % del mejor y el genético a 11.6 %. La colonia de hormigas por sí sola es bastante mejor que el genético: su regla de construcción usa el costo de cada arista ($\eta_{ij}$), mientras que el cruce OX y la inversión no saben nada de costos y solo los "ven" a través de la selección. Las Figuras 9 y 10 muestran esa diferencia con la semilla 2026. La colonia de hormigas arranca ya en 2 690.75 €, porque cada hormiga construye su recorrido prefiriendo los trayectos baratos, y su última mejora llega en la iteración 64 (1 922.63 €). El genético arranca de permutaciones aleatorias, con trayectos que cruzan toda la península (5 730.80 €), y necesita hasta la generación 286 para llegar a 1 999.15 €. Con 2-opt los dos quedan a menos de 0.1 % en promedio. En la práctica, la búsqueda local hace la mayor parte del trabajo y la metaheurística le da buenos puntos de partida.
 
 ### 2.5 ¿Cambia la ruta con el valor de la hora?
 
@@ -314,17 +334,17 @@ La Tabla 6 da los valores exactos de $h$ en los que cambia la ruta, calculados c
 
 *Fuente: elaboración propia con `python parte2_valor_hora.py`.*
 
-![Figura 10](../resultados/parte2/valor_hora.png)
+![Figura 11](../resultados/parte2/valor_hora.png)
 
-**Figura 10.** Distancia, tiempo y peajes del mejor recorrido según el valor de la hora. *Fuente: elaboración propia.*
+**Figura 11.** Distancia, tiempo y peajes del mejor recorrido según el valor de la hora. *Fuente: elaboración propia.*
 
-![Figura 11](../resultados/parte2/rutas_valor_hora.png)
+![Figura 12](../resultados/parte2/rutas_valor_hora.png)
 
-**Figura 11.** Mejor recorrido con $h=0$ (solo dinero) y con $h=200$ €/h (casi solo tiempo). *Fuente: elaboración propia.*
+**Figura 12.** Mejor recorrido con $h=0$ (solo dinero) y con $h=200$ €/h (casi solo tiempo). *Fuente: elaboración propia.*
 
 Así, **sí cambia la ruta**. El primer cambio ocurre casi de inmediato, en $h^*\approx 0.5$ €/h: con $h=0$ solo cuenta el dinero, y basta darle un valor mínimo al tiempo para preferir un recorrido 1.75 h más rápido que cuesta apenas 0.89 € más (entran Vitoria–Donostia por la AP-1 y Cádiz–Málaga por la AP-7 de la Costa del Sol). Los cambios importantes están entre 13 y 15.3 €/h: en $h^*\approx 12.95$ €/h entran Zaragoza–Soria y Córdoba–Málaga (AP-46), y en $h^*\approx 15.28$ €/h entran A Coruña–Pontevedra (AP-9) y Barcelona–Tarragona (C-32). Cada uno de esos dos cambios ahorra casi 1 h a cambio de 13–15 €. Nuestro valor por defecto, 15 €/h, cae justo en esa franja, así que la ruta recomendada es sensible a ese parámetro. Por encima de unos 30 €/h los cambios ya son muy pequeños (0.27 h y 0.09 h).
 
-Como se ve en la Tabla 5, los cambios son pequeños en términos relativos: entre $h=0$ y $h=200$ el tiempo total baja 4.1 h (de 82.03 a 77.96 h), y los peajes pasan de 22 a 95 €. Esto tiene sentido porque los costos de tiempo y de combustible son casi proporcionales entre sí (los dos crecen con la distancia). Lo que realmente separa una ruta "barata" de una "rápida" son los pocos trayectos con autopistas de pago, que en 2026 son muchos menos que hace unos años. Comparando los dos recorridos de la Figura 11, 19 de los 47 trayectos cambian. Los que entran con $h=200$ y pagan peaje son A Coruña–Pontevedra (AP-9), León–Oviedo (AP-66), Madrid–Ávila (AP-6 y AP-51), Vitoria–Donostia (AP-1), Cádiz–Málaga (AP-7), Lugo–León (AP-71), Córdoba–Málaga (AP-46) y Barcelona–Tarragona (C-32). Justamente son las zonas donde siguen las autopistas de pago.
+Como se ve en la Tabla 5 y en la Figura 11, los cambios son pequeños en términos relativos: entre $h=0$ y $h=200$ el tiempo total baja 4.1 h (de 82.03 a 77.96 h), y los peajes pasan de 22 a 95 €. Esto tiene sentido porque los costos de tiempo y de combustible son casi proporcionales entre sí (los dos crecen con la distancia). Lo que realmente separa una ruta "barata" de una "rápida" son los pocos trayectos con autopistas de pago, que en 2026 son muchos menos que hace unos años. Comparando los dos recorridos de la Figura 12, 19 de los 47 trayectos cambian. Los que entran con $h=200$ y pagan peaje son A Coruña–Pontevedra (AP-9), León–Oviedo (AP-66), Madrid–Ávila (AP-6 y AP-51), Vitoria–Donostia (AP-1), Cádiz–Málaga (AP-7), Lugo–León (AP-71), Córdoba–Málaga (AP-46) y Barcelona–Tarragona (C-32). Justamente son las zonas donde siguen las autopistas de pago.
 
 Hay que tener cuidado con estos números por dos razones. Primero, los valores de $h^*$ los calculamos entre recorridos que encontraron los algoritmos, no entre todos los posibles, así que un cambio pequeño (como el de 148.85 €/h) puede deberse a que los algoritmos no encontraron antes ese recorrido. Segundo, dependen mucho de los datos de peaje. Una versión anterior de este estudio usaba tarifas sin verificar (16 de las 20 vías con un promedio de 0.163 €/km) y ubicaba los cambios en 7.30, 8.65 y 19.48 €/h. Al corregir las tarifas, los puntos de cambio se movieron varios €/h. Lo que se mantiene es el patrón: los cambios importantes están entre 10 y 20 €/h y casi no hay cambios por encima de 30 €/h.
 
@@ -343,19 +363,33 @@ Hay que tener cuidado con estos números por dos razones. Primero, los valores d
 ## Uso de inteligencia artificial
 
 <!--
-COMPLETAR POR EL EQUIPO. El enunciado pide los principales prompts (literales)
-y una discusión de su impacto. Peguen aquí los prompts reales que usaron y
-expliquen qué partes del trabajo salieron de la IA, qué cambiaron ustedes y por qué.
+COMPLETAR POR EL EQUIPO: faltan los prompts literales 1 y 2 (los que usaron para
+generar el código de las partes 1 y 2 y el script de descarga; son también los de
+los Hallazgos 2 a 4) y las herramientas que usaron además de Claude Code.
 -->
 
-**Herramientas usadas:** <herramientas>
+Usamos IA en tres frentes: escribir código, buscar datos del mundo real y revisar el trabajo. La regla fue la misma en los tres: ninguna salida de la IA entra al trabajo sin una verificación independiente, ya sea un caso con respuesta conocida, una fuente primaria o una comparación exacta contra la versión anterior.
+
+**Herramientas usadas:** Claude Code (Anthropic), con búsqueda web para los datos; el resumen automático de un buscador web (Hallazgo 1); <otras herramientas del equipo>.
 
 **Prompts principales:**
 
-1. `<prompt literal>`
-2. `<prompt literal>`
+| # | Para qué | Prompt (literal) |
+|---|---|---|
+| 1 | Código de la Parte 1: funciones, gradientes y métodos | `<prompt literal>` |
+| 2 | Código de la Parte 2: descarga de datos, ACO, GA y 2-opt | `<prompt literal>` |
+| 3 | Datos del mundo real: peajes, vehículo, combustible y valor de la hora | El prompt completo está en la Cacería de la alucinación, antes del Hallazgo 5 |
+| 4 | Optimizar el rendimiento del código | `revisa el repo y optimiza algunas funciones trata de hacer varios commits` |
+| 5 | Revisar el reporte contra el enunciado | `el reporte debemos hacer que cumpla esto`, seguido de la lista de requisitos del reporte copiada del enunciado |
 
-**Impacto en el resultado:** <discusión>
+**Impacto en el resultado:**
+
+- **Datos.** Fue donde la IA más se equivocó y donde más pesó verificar. Varias de las tarifas que nos dio estaban mal (Hallazgos 1, 5, 6 y 7): una era de camiones y no de turismos, otra no aparecía en la fuente que citaba y otra era de 2025 aunque se presentaba como de 2026. Corregir las tarifas movió varios €/h los valores de la hora en los que cambia la ruta (sección 2.5). Sin esa verificación, la conclusión principal de la Parte 2 habría sido otra.
+- **Código.** La IA produjo rápido versiones que corrían, pero con errores que no se notaban sin probar casos conocidos: el script de descarga no detectaba los peajes (Hallazgo 2), perdía kilómetros por etiquetas inconsistentes de OpenStreetMap (Hallazgo 3) y el GA del TSP se estancaba (Hallazgo 4). En los tres casos el error apareció al comparar con un resultado esperado.
+- **Rendimiento.** Con el prompt 4, la IA midió con un perfilador dónde se iba el tiempo y propuso cinco cambios, uno por commit, que hacen los algoritmos entre 1.3 y 2.5 veces más rápidos. Exigimos que con las mismas semillas los resultados fueran idénticos, y lo comprobamos comparando rutas, costos y curvas contra la versión anterior. En el camino aparecieron dos propuestas subóptimas de la propia IA: la primera versión del nuevo 2-opt era más lenta que la original con rutas aleatorias, lo que se vio al medir las dos versiones, y una forma de calcular el costo de la ruta cambiaba el orden de la suma y podía alterar el último decimal. Las dos se corrigieron antes del commit, así que ninguna tabla ni figura del reporte cambió.
+- **Revisión del reporte.** Con el prompt 5 encontramos seis figuras que no se citaban en el texto, siete referencias que no se citaban, el enlace al repositorio sin poner y los operadores del GA del TSP sin sus ecuaciones. Todo eso se corrigió.
+
+En resumen, la IA aceleró mucho la escritura de código y la búsqueda de fuentes, pero la mayor parte del tiempo se fue en verificar lo que producía.
 
 ---
 
@@ -371,6 +405,8 @@ Estos son errores que aparecieron mientras desarrollábamos el trabajo con ayuda
 4. **Evidencia:** descargamos los PDF oficiales del Ministerio de Transportes ("Peajes vigentes desde el día 01/01/2026"). AP-6 (15,70 €) y AP-68 (39,90 €) coinciden. Pero la AP-71 León-Astorga cuesta **6,20 € de día y 2,50 € de noche** para ligeros, y ninguno de los dos es 4,10 €. La AP-53 Santiago-Alto de Santo Domingo cuesta **7,25 €**, no 5,90 €.
 5. **Corrección:** en `datos/peajes_tarifas.csv` solo usamos importes leídos directamente de los PDF oficiales. Después verificamos también las demás vías (ver los Hallazgos 5 a 7); solo la M-12 queda con el promedio.
 6. **Lección:** un resumen generado por IA puede mezclar números correctos con incorrectos en la misma lista, y que dos sean correctos no garantiza los demás. Hay que verificar cada número contra la fuente primaria.
+
+<!-- COMPLETAR POR EL EQUIPO: los Hallazgos 2, 3 y 4 necesitan el prompt LITERAL (el enunciado lo exige). -->
 
 ### Hallazgo 2 (código): suponer que OSRM marca los tramos de peaje
 
@@ -473,7 +509,7 @@ Autopista del Sol. (2026). *Tarifas* [AP-7 Málaga–Guadiaro]. Recuperado el 11
 
 Bidegi. (2026). *2026 AP-8, AP-1, AP-636 tarifak* [Tarifas de las autopistas de Gipuzkoa]. Recuperado el 11 de octubre de 2026, de https://www.bidegi.eus
 
-Clerc, M., & Kennedy, J. (2002). The particle swarm: Explosion, stability, and convergence in a multidimensional complex space. *IEEE Transactions on Evolutionary Computation, 6*(1), 58–73. https://doi.org/10.1109/4235.985692
+Clerc, M., y Kennedy, J. (2002). The particle swarm: Explosion, stability, and convergence in a multidimensional complex space. *IEEE Transactions on Evolutionary Computation, 6*(1), 58–73. https://doi.org/10.1109/4235.985692
 
 Comisión Europea. (2026). *Weekly Oil Bulletin* [Precios de los combustibles con impuestos, 28 de septiembre de 2026]. Recuperado el 6 de octubre de 2026, de https://energy.ec.europa.eu/data-and-analysis/weekly-oil-bulletin_en
 
@@ -481,31 +517,35 @@ Croes, G. A. (1958). A method for solving traveling-salesman problems. *Operatio
 
 Davis, L. (1985). Applying adaptive algorithms to epistatic domains. En *Proceedings of the 9th International Joint Conference on Artificial Intelligence* (Vol. 1, pp. 162–164). Morgan Kaufmann.
 
-Dorigo, M., Maniezzo, V., & Colorni, A. (1996). Ant system: Optimization by a colony of cooperating agents. *IEEE Transactions on Systems, Man, and Cybernetics, Part B (Cybernetics), 26*(1), 29–41. https://doi.org/10.1109/3477.484436
+Dorigo, M., Maniezzo, V., y Colorni, A. (1996). Ant system: Optimization by a colony of cooperating agents. *IEEE Transactions on Systems, Man, and Cybernetics, Part B (Cybernetics), 26*(1), 29–41. https://doi.org/10.1109/3477.484436
 
-Dorigo, M., & Stützle, T. (2004). *Ant colony optimization*. MIT Press.
+Dorigo, M., y Stützle, T. (2004). *Ant colony optimization*. MIT Press.
 
 Goldberg, D. E. (1989). *Genetic algorithms in search, optimization, and machine learning*. Addison-Wesley.
 
-Griewank, A., & Walther, A. (2008). *Evaluating derivatives: Principles and techniques of algorithmic differentiation* (2.ª ed.). SIAM. https://doi.org/10.1137/1.9780898717761
+Griewank, A., y Walther, A. (2008). *Evaluating derivatives: Principles and techniques of algorithmic differentiation* (2.ª ed.). SIAM. https://doi.org/10.1137/1.9780898717761
 
 Holland, J. H. (1975). *Adaptation in natural and artificial systems*. University of Michigan Press.
 
 Instituto Nacional de Estadística. (2026). *Encuesta Trimestral de Coste Laboral (ETCL). Segundo trimestre de 2026* [Nota de prensa]. Recuperado el 11 de octubre de 2026, de https://www.ine.es/dyngs/Prensa/ETCL2T26.htm
 
-Jamil, M., & Yang, X.-S. (2013). A literature survey of benchmark functions for global optimisation problems. *International Journal of Mathematical Modelling and Numerical Optimisation, 4*(2), 150–194. https://doi.org/10.1504/IJMMNO.2013.055204
+Jamil, M., y Yang, X.-S. (2013). A literature survey of benchmark functions for global optimisation problems. *International Journal of Mathematical Modelling and Numerical Optimisation, 4*(2), 150–194. https://doi.org/10.1504/IJMMNO.2013.055204
 
-Kennedy, J., & Eberhart, R. (1995). Particle swarm optimization. En *Proceedings of ICNN'95 – International Conference on Neural Networks* (Vol. 4, pp. 1942–1948). IEEE. https://doi.org/10.1109/ICNN.1995.488968
+Kennedy, J., y Eberhart, R. (1995). Particle swarm optimization. En *Proceedings of ICNN'95 – International Conference on Neural Networks* (Vol. 4, pp. 1942–1948). IEEE. https://doi.org/10.1109/ICNN.1995.488968
 
 km77.com. (2024). *SEAT León 2.0 TDI 85 kW (115 CV) Style (2024): precio y ficha técnica*. Recuperado el 6 de octubre de 2026, de https://www.km77.com/coches/seat/leon/2020/5-puertas/estandar/leon-20-tdi-85-kw-115-cv-style/datos
 
-Luxen, D., & Vetter, C. (2011). Real-time routing with OpenStreetMap data. En *Proceedings of the 19th ACM SIGSPATIAL International Conference on Advances in Geographic Information Systems* (pp. 513–516). ACM. https://doi.org/10.1145/2093973.2094062
+Luxen, D., y Vetter, C. (2011). Real-time routing with OpenStreetMap data. En *Proceedings of the 19th ACM SIGSPATIAL International Conference on Advances in Geographic Information Systems* (pp. 513–516). ACM. https://doi.org/10.1145/2093973.2094062
 
-Ministerio de Transportes y Movilidad Sostenible. (2026). *Peajes vigentes desde el día 01/01/2026* [Tablas de tarifas de las autopistas AP-6, AP-7 Alicante–Cartagena, AP-9, AP-46, AP-53, AP-68 y AP-71]. Recuperado el 6 y el 11 de octubre de 2026, de https://www.transportes.gob.es/carreteras/nuestra-red/autopistas-de-peaje/peajes-actuales
+Ministerio de Transportes y Movilidad Sostenible. (2026a). *Autopista AP-46, Alto de las Pedrizas–Málaga: peajes 2026* [Tabla de tarifas]. Recuperado el 11 de octubre de 2026, de https://cdn.transportes.gob.es/portal-web-transportes/carreteras/nuestrared/autopistaspeaje/peajes-actuales/autopista-ap-46%2C-alto-de-las-pedrizas---malaga-2026.pdf
+
+Ministerio de Transportes y Movilidad Sostenible. (2026b). *Autopista AP-68, Bilbao–Zaragoza: peajes 2026* [Tabla de tarifas]. Recuperado el 6 y el 11 de octubre de 2026, de https://cdn.transportes.gob.es/portal-web-transportes/carreteras/nuestrared/autopistaspeaje/peajes-actuales/autopista-ap-68%2C-bilbao---zaragoza-2026.pdf
+
+Ministerio de Transportes y Movilidad Sostenible. (2026c). *Autopista AP-7, Alicante–Cartagena: peajes 2026* [Tabla de tarifas]. Recuperado el 11 de octubre de 2026, de https://cdn.transportes.gob.es/portal-web-transportes/carreteras/nuestrared/autopistaspeaje/peajes-actuales/autopista-ap-7%2C-alicante---cartagena-2026.pdf
 
 Natural Earth. (s. f.). *Admin 0 – Countries* (escala 1:50m) [Datos geográficos]. Recuperado el 6 de octubre de 2026, de https://www.naturalearthdata.com
 
-Nocedal, J., & Wright, S. J. (2006). *Numerical optimization* (2.ª ed.). Springer. https://doi.org/10.1007/978-0-387-40065-5
+Nocedal, J., y Wright, S. J. (2006). *Numerical optimization* (2.ª ed.). Springer. https://doi.org/10.1007/978-0-387-40065-5
 
 OpenStreetMap contributors. (2026). *Nominatim* [Servicio de geocodificación]. Recuperado el 6 de octubre de 2026, de https://nominatim.openstreetmap.org
 
@@ -515,4 +555,4 @@ Rosenbrock, H. H. (1960). An automatic method for finding the greatest or least 
 
 Sociedad Estatal de Infraestructuras del Transporte Terrestre. (2026). *Tarifas 2026* [AP-7 Cartagena–Vera, AP-36, AP-41, R-2, R-3, R-4 y R-5]. Recuperado el 11 de octubre de 2026, de https://www.seitt.es
 
-Storn, R., & Price, K. (1997). Differential evolution – A simple and efficient heuristic for global optimization over continuous spaces. *Journal of Global Optimization, 11*(4), 341–359. https://doi.org/10.1023/A:1008202821328
+Storn, R., y Price, K. (1997). Differential evolution – A simple and efficient heuristic for global optimization over continuous spaces. *Journal of Global Optimization, 11*(4), 341–359. https://doi.org/10.1023/A:1008202821328

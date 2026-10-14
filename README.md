@@ -32,6 +32,7 @@ Cada experimento se lanza con un solo comando. Los resultados (tablas, figuras y
 | Parte 1: 30 corridas, tabla y gráficas | `python parte1_experimentos.py` | 1.5 min |
 | Parte 1: demostración rápida | `python parte1_experimentos.py --corridas 5` | 20 s |
 | Parte 1: GIF (GD y PSO) | `python parte1_animacion.py` | 25 s |
+| Parte 1: GIF de evolución diferencial | `python parte1_animacion.py --funcion rastrigin --metodo de` | 5 s |
 | Parte 2: ruta con ACO y GA + GIF | `python parte2_tsp.py --gif` | 15 s |
 | Parte 2: GIF sin 2-opt (más cuadros) | `python parte2_tsp.py --sin-2opt --gif --salida resultados/parte2/sin_2opt` | 10 s |
 | Parte 2: ACO vs GA, con y sin 2-opt (10 corridas) | `python parte2_comparacion.py` | 2 min |
