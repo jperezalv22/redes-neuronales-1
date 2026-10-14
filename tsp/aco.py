@@ -59,7 +59,12 @@ def colonia_hormigas(C, rng, n_hormigas=30, iteraciones=200, alfa=1.0, beta=3.0,
             for _ in range(n - 1):
                 p = peso[ruta[-1]].copy()
                 p[visitada] = 0.0
-                j = rng.choice(n, p=p / p.sum())
+                # ruleta: lo mismo que rng.choice(n, p=p / p.sum()) (mismo numero
+                # aleatorio y mismo resultado), pero sin las validaciones de
+                # rng.choice, que eran la mayor parte del tiempo de la colonia
+                cdf = (p / p.sum()).cumsum()
+                cdf /= cdf[-1]
+                j = int(cdf.searchsorted(rng.random(), side="right"))
                 ruta.append(j)
                 visitada[j] = True
             rutas.append(ruta)
