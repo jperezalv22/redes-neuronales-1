@@ -16,7 +16,7 @@ import numpy as np
 
 def torneo(pob, fit, rng, k=3):
     idx = rng.integers(0, len(pob), size=k)
-    return pob[idx[np.argmin(fit[idx])]]
+    return pob[idx[fit[idx].argmin()]]
 
 
 def algoritmo_genetico(problema, rng, presupuesto, tam_pob=40, prob_cruce=0.9,
@@ -40,10 +40,12 @@ def algoritmo_genetico(problema, rng, presupuesto, tam_pob=40, prob_cruce=0.9,
             else:
                 hijo = p1.copy()
             muta = rng.random(problema.dim) < prob_mut
-            hijo[muta] += rng.normal(0, escala_mut * ancho[muta])
-            hijos.append(np.clip(hijo, problema.inf, problema.sup))
+            if muta.any():  # casi siempre no muta ningun gen: nos ahorramos la llamada
+                hijo[muta] += rng.normal(0, escala_mut * ancho[muta])
+            hijos.append(hijo)
 
-        pob = np.array(hijos)
+        # recorte al dominio de toda la generacion junta (el elite ya esta dentro)
+        pob = np.clip(np.array(hijos), problema.inf, problema.sup)
         # el elite ya tiene su f calculada: solo evaluamos a los nuevos
         f_elite = fit[i_mejor]
         fit = np.concatenate([[f_elite], problema.f(pob[1:])])
