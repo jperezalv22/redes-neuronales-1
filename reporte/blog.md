@@ -7,7 +7,7 @@ repositorio: "https://github.com/srodriguezsu/redes-neuronales-1"
 
 # Gradientes, enjambres y hormigas: de Rosenbrock a recorrer España en carro
 
-**Autores:** Santiago Vanegas Vasquez, Juan Pablo Perez Alvarez y Sebastian Rodriguez Suarez
+**Autores:** Santiago Vanegas Vasquez (C.C. 1000760600), Juan Pablo Perez Alvarez (C.C. 1045493511) y Sebastian Rodriguez Suarez (C.C. 1020107446)
 
 **Repositorio:** [https://github.com/srodriguezsu/redes-neuronales-1](https://github.com/srodriguezsu/redes-neuronales-1)
 
