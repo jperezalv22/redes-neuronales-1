@@ -133,3 +133,9 @@ python descargar_datos_tsp.py     # unos 15 minutos, respeta los límites de Nom
 ```
 
 Si el servidor público de OSRM cambió su red de carreteras, las distancias pueden variar un poco.
+
+## Videos de contribución individual
+
+| Integrante | Video |
+|---|---|
+| jperezalv22 | [Ver en Drive](https://drive.google.com/file/d/14mjFcH3g3-Jw0qS5vlvHBlAOTny2avt3/view?usp=sharing) |
