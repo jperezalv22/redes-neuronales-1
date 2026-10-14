@@ -138,6 +138,6 @@ Si el servidor público de OSRM cambió su red de carreteras, las distancias pue
 
 | Integrante | Video |
 |---|---|
-| jperezalv22 | [Ver en Drive](https://drive.google.com/file/d/14mjFcH3g3-Jw0qS5vlvHBlAOTny2avt3/view?usp=sharing) |
+| Juan Pablo Pérez Álvarez | [Ver en Drive](https://drive.google.com/file/d/14mjFcH3g3-Jw0qS5vlvHBlAOTny2avt3/view?usp=sharing) |
 | Sebastián Rodríguez Suárez | [Ver en YouTube](https://youtu.be/WAN9-PjzU04) |
-| Santiago Vanegas | [Ver en Drive](https://drive.google.com/file/d/17PyS6xoLpOVq89eEotOHCTdHpurMWbxk/view?usp=sharing) |
+| Santiago Vanegas Vásquez | [Ver en Drive](https://drive.google.com/file/d/17PyS6xoLpOVq89eEotOHCTdHpurMWbxk/view?usp=sharing) |
