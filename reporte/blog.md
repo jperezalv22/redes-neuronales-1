@@ -1,11 +1,13 @@
 ---
 title: "Gradientes, enjambres y hormigas: de Rosenbrock a recorrer España en carro"
 curso: Redes neuronales y algoritmos bioinspirados, UNAL 2026-02
-autores: "<nombres del equipo>"
+autores: "Santiago Vanegas Vasquez, Juan Pablo Perez Alvarez y Sebastian Rodriguez Suarez"
 repositorio: "https://github.com/srodriguezsu/redes-neuronales-1"
 ---
 
 # Gradientes, enjambres y hormigas: de Rosenbrock a recorrer España en carro
+
+**Autores:** Santiago Vanegas Vasquez, Juan Pablo Perez Alvarez y Sebastian Rodriguez Suarez
 
 **Repositorio:** [https://github.com/srodriguezsu/redes-neuronales-1](https://github.com/srodriguezsu/redes-neuronales-1)
 
