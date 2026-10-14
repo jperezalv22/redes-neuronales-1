@@ -20,19 +20,20 @@ def evolucion_diferencial(problema, rng, presupuesto, tam_pob=30, F=0.8, CR=0.9)
 
     curva = [(problema.costo(), fit.min())]
     trayectoria = [pob.copy()]
+    # candidatos a r1, r2, r3 para cada i (todos menos i); no cambian entre generaciones
+    otros = [np.delete(np.arange(n), i) for i in range(n)]
 
     while problema.costo() + n <= presupuesto:
         prueba = np.empty_like(pob)
         for i in range(n):
-            otros = [k for k in range(n) if k != i]
-            r1, r2, r3 = rng.choice(otros, size=3, replace=False)
+            r1, r2, r3 = rng.choice(otros[i], size=3, replace=False)
             v = pob[r1] + F * (pob[r2] - pob[r3])
 
             cruza = rng.random(d) < CR
             cruza[rng.integers(d)] = True  # j_rand
-            u = np.where(cruza, v, pob[i])
-            prueba[i] = np.clip(u, problema.inf, problema.sup)
+            prueba[i] = np.where(cruza, v, pob[i])
 
+        np.clip(prueba, problema.inf, problema.sup, out=prueba)
         f_prueba = problema.f(prueba)  # evaluamos toda la generacion junta
         gana = f_prueba <= fit
         pob[gana], fit[gana] = prueba[gana], f_prueba[gana]
