@@ -6,7 +6,8 @@ import numpy as np
 def costo_ruta(ruta, C):
     """Costo de un recorrido cerrado (se vuelve a la ciudad de salida)."""
     ruta = np.asarray(ruta)
-    return C[ruta, np.roll(ruta, -1)].sum()
+    siguiente = np.concatenate((ruta[1:], ruta[:1]))  # = np.roll(ruta, -1), mas barato
+    return C[ruta, siguiente].sum()
 
 
 def dos_opt(ruta, C):
@@ -34,10 +35,10 @@ def dos_opt(ruta, C):
             # delta[i, j] de las filas i..n-3 a la vez. Mientras no haya mejora
             # la ruta no cambia, asi que estas filas sirven para todos los i que
             # siguen: solo se recalculan despues de invertir un pedazo.
-            sig = np.roll(ruta, -1)
+            sig = np.concatenate((ruta[1:], ruta[:1]))  # ciudad siguiente
             ab = C[ruta, sig]  # costo de la arista que sale de cada posicion
             f = slice(i, n - 2)
-            delta = C[np.ix_(ruta[f], ruta)] + C[np.ix_(sig[f], sig)] - ab[f, None] - ab[None, :]
+            delta = C[ruta[f, None], ruta] + C[sig[f, None], sig] - ab[f, None] - ab[None, :]
             delta[invalido[f]] = np.inf
             filas = np.flatnonzero(delta.min(axis=1) < -1e-9)
             if len(filas) == 0:
