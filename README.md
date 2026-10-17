@@ -5,7 +5,7 @@ Redes neuronales y algoritmos bioinspirados, Universidad Nacional de Colombia, s
 - **Parte 1.** Comparamos descenso por gradiente con un algoritmo genético, PSO y evolución diferencial sobre las funciones de **Rosenbrock** y **Rastrigin**, en 2D y 3D.
 - **Parte 2.** Buscamos el recorrido más barato por las 47 capitales de provincia de la España peninsular con **colonia de hormigas** y un **algoritmo genético**. El costo de cada trayecto incluye el tiempo del vendedor, los peajes y el combustible.
 
-El reporte (entrada de blog) está en [`reporte/blog.md`](reporte/blog.md).
+El reporte está publicado como entrada de blog en **https://jperezalv22.github.io/redes-neuronales-1/** (fuente: [`reporte/blog.md`](reporte/blog.md)).
 
 ## Instalación
 
