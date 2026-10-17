@@ -15,6 +15,33 @@ En este trabajo comparamos métodos de optimización que usan el gradiente con m
 
 Todo el código, los datos y las instrucciones para reproducir cada figura están en el repositorio. Cada figura y cada tabla de este reporte se regenera con un solo comando (ver el README).
 
+## Índice
+
+- [Parte 1. Optimización numérica](#parte-1.-optimización-numérica)
+  - [1.1 Funciones de prueba](#funciones-de-prueba)
+  - [1.2 Métodos](#métodos)
+  - [1.3 Comparación justa: cómo contamos las evaluaciones](#comparación-justa-cómo-contamos-las-evaluaciones)
+  - [1.4 Resultados](#resultados)
+  - [1.5 Discusión](#discusión)
+- [Parte 2. Optimización combinatoria: recorrer España](#parte-2.-optimización-combinatoria-recorrer-españa)
+  - [2.1 Formulación del problema del viajero](#formulación-del-problema-del-viajero)
+  - [2.2 Datos](#datos)
+  - [2.3 Métodos](#métodos-1)
+  - [2.4 Resultados](#resultados-1)
+  - [2.5 ¿Cambia la ruta con el valor de la hora?](#cambia-la-ruta-con-el-valor-de-la-hora)
+- [Conclusiones](#conclusiones)
+- [Uso de inteligencia artificial](#uso-de-inteligencia-artificial)
+- [Cacería de la alucinación](#cacería-de-la-alucinación)
+  - [Hallazgo 1 (datos del mundo real): tarifas de peaje equivocadas en un resumen de búsqueda](#hallazgo-1-datos-del-mundo-real-tarifas-de-peaje-equivocadas-en-un-resumen-de-búsqueda)
+  - [Hallazgo 2 (código): suponer que OSRM marca los tramos de peaje](#hallazgo-2-código-suponer-que-osrm-marca-los-tramos-de-peaje)
+  - [Hallazgo 3 (código / datos): kilómetros de peaje perdidos por una etiqueta de OpenStreetMap](#hallazgo-3-código-datos-kilómetros-de-peaje-perdidos-por-una-etiqueta-de-openstreetmap)
+  - [Hallazgo 4 (código / conceptos): algoritmo genético que se estancaba por la búsqueda local](#hallazgo-4-código-conceptos-algoritmo-genético-que-se-estancaba-por-la-búsqueda-local)
+  - [Hallazgo 5 (datos del mundo real): tarifa de camiones en vez de la de turismo (C-32)](#hallazgo-5-datos-del-mundo-real-tarifa-de-camiones-en-vez-de-la-de-turismo-c-32)
+  - [Hallazgo 6 (datos del mundo real): un precio que no está en la fuente que se cita (R-4)](#hallazgo-6-datos-del-mundo-real-un-precio-que-no-está-en-la-fuente-que-se-cita-r-4)
+  - [Hallazgo 7 (datos del mundo real): tarifa de 2025 presentada como de 2026 (AP-36)](#hallazgo-7-datos-del-mundo-real-tarifa-de-2025-presentada-como-de-2026-ap-36)
+  - [Verificaciones que no encontraron errores](#verificaciones-que-no-encontraron-errores)
+- [Referencias](#referencias)
+
 ---
 
 ## Parte 1. Optimización numérica
