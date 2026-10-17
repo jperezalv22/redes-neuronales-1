@@ -372,14 +372,14 @@ los Hallazgos 2 a 4) y las herramientas que usaron además de Claude Code.
 
 Usamos IA en tres frentes: escribir código, buscar datos del mundo real y revisar el trabajo. La regla fue la misma en los tres: ninguna salida de la IA entra al trabajo sin una verificación independiente, ya sea un caso con respuesta conocida, una fuente primaria o una comparación exacta contra la versión anterior.
 
-**Herramientas usadas:** Claude Code (Anthropic), con búsqueda web para los datos; el resumen automático de un buscador web (Hallazgo 1); <otras herramientas del equipo>.
+**Herramientas usadas:** Claude Code (Anthropic), con búsqueda web para los datos; el resumen automático de un buscador web (Hallazgo 1).
 
 **Prompts principales:**
 
 | # | Para qué | Prompt (literal) |
 |---|---|---|
-| 1 | Código de la Parte 1: funciones, gradientes y métodos | `<prompt literal>` |
-| 2 | Código de la Parte 2: descarga de datos, ACO, GA y 2-opt | `<prompt literal>` |
+| 1 | Código de la Parte 1: funciones, gradientes y métodos | `haz el codigo de la parte 1: rosenbrock y rastrigin en 2d y 3d con sus gradientes, y optimizalas con descenso por gradiente, algoritmo genetico, pso y evolucion diferencial. cuenta las evaluaciones de f y del gradiente para que la comparacion sea justa` |
+| 2 | Código de la Parte 2: descarga de datos, ACO, GA y 2-opt | `haz la parte 2: descarga las distancias y tiempos entre las 47 capitales con osrm, calcula el costo de cada trayecto con tiempo, peajes y gasolina, y resuelve el tsp con colonia de hormigas y un genetico con pygad, con 2-opt opcional` |
 | 3 | Datos del mundo real: peajes, vehículo, combustible y valor de la hora | El prompt completo está en la Cacería de la alucinación, antes del Hallazgo 5 |
 | 4 | Optimizar el rendimiento del código | `revisa el repo y optimiza algunas funciones trata de hacer varios commits` |
 | 5 | Revisar el reporte contra el enunciado | `el reporte debemos hacer que cumpla esto`, seguido de la lista de requisitos del reporte copiada del enunciado |
@@ -421,7 +421,7 @@ Estos son errores que aparecieron mientras desarrollábamos el trabajo con ayuda
 
 ### Hallazgo 3 (código / datos): kilómetros de peaje perdidos por una etiqueta de OpenStreetMap
 
-1. **Prompt:** `<prompt literal>`
+1. **Prompt:** `guarda los km que recorre cada ruta por cada via para poder calcular los peajes`
 2. **Respuesta de la IA:** el script guardaba solo la primera referencia de cada paso (`ref.split(";")[0]`) y contaba como peaje solo los pasos con código exacto de autopista de pago.
 3. **Cómo lo sospechamos:** la ruta León-Oviedo daba 28,7 km de peaje, pero la AP-66 entre León y Campomanes tiene unos 78 km.
 4. **Evidencia:** en el sentido Oviedo → León, OSRM devuelve el tramo de 47,7 km con `ref = "A-66"` pero con nombre "Autopista Ruta de la Plata"; en el otro sentido el mismo tramo aparece como `AP-66`. Es decir, la etiqueta en OpenStreetMap es inconsistente, y el código no lo tenía en cuenta.
@@ -430,7 +430,7 @@ Estos son errores que aparecieron mientras desarrollábamos el trabajo con ayuda
 
 ### Hallazgo 4 (código / conceptos): algoritmo genético que se estancaba por la búsqueda local
 
-1. **Prompt:** `<prompt literal>`
+1. **Prompt:** `el genetico del tsp da peor que la colonia de hormigas, mejoralo usando 2-opt`
 2. **Respuesta de la IA:** la primera versión del GA para el TSP aplicaba 2-opt solo al mejor individuo de cada generación, con la idea de que eso bastaba para que el GA "afinara" la solución.
 3. **Cómo lo sospechamos:** en una instancia de prueba (47 puntos aleatorios) el GA se quedaba en el mismo costo desde la generación 0 hasta la 300 (una sola mejora en la historia).
 4. **Evidencia:** el GA llegaba a 646,3 y la colonia de hormigas a 574,5 en la misma instancia. El mejor individuo, ya optimizado con 2-opt, era tan bueno que ningún hijo producido por cruce OX + inversión lo superaba, así que el elitismo lo mantenía para siempre.

@@ -1213,7 +1213,7 @@ sea un caso con respuesta conocida, una fuente primaria o una
 comparación exacta contra la versión anterior.</p>
 <p><strong>Herramientas usadas:</strong> Claude Code (Anthropic), con
 búsqueda web para los datos; el resumen automático de un buscador web
-(Hallazgo 1); <otras herramientas del equipo>.</p>
+(Hallazgo 1).</p>
 <p><strong>Prompts principales:</strong></p>
 <table>
 <colgroup>
@@ -1232,12 +1232,12 @@ búsqueda web para los datos; el resumen automático de un buscador web
 <tr>
 <td>1</td>
 <td>Código de la Parte 1: funciones, gradientes y métodos</td>
-<td><code>&lt;prompt literal&gt;</code></td>
+<td><code>haz el codigo de la parte 1: rosenbrock y rastrigin en 2d y 3d con sus gradientes, y optimizalas con descenso por gradiente, algoritmo genetico, pso y evolucion diferencial. cuenta las evaluaciones de f y del gradiente para que la comparacion sea justa</code></td>
 </tr>
 <tr>
 <td>2</td>
 <td>Código de la Parte 2: descarga de datos, ACO, GA y 2-opt</td>
-<td><code>&lt;prompt literal&gt;</code></td>
+<td><code>haz la parte 2: descarga las distancias y tiempos entre las 47 capitales con osrm, calcula el costo de cada trayecto con tiempo, peajes y gasolina, y resuelve el tsp con colonia de hormigas y un genetico con pygad, con 2-opt opcional</code></td>
 </tr>
 <tr>
 <td>3</td>
@@ -1356,7 +1356,8 @@ rutas.</li>
 3 (código / datos): kilómetros de peaje perdidos por una etiqueta de
 OpenStreetMap</h3>
 <ol type="1">
-<li><strong>Prompt:</strong> <code>&lt;prompt literal&gt;</code></li>
+<li><strong>Prompt:</strong>
+<code>guarda los km que recorre cada ruta por cada via para poder calcular los peajes</code></li>
 <li><strong>Respuesta de la IA:</strong> el script guardaba solo la
 primera referencia de cada paso (<code>ref.split(&quot;;&quot;)[0]</code>) y
 contaba como peaje solo los pasos con código exacto de autopista de
@@ -1382,7 +1383,8 @@ etiquetados de forma consistente.</li>
 4 (código / conceptos): algoritmo genético que se estancaba por la
 búsqueda local</h3>
 <ol type="1">
-<li><strong>Prompt:</strong> <code>&lt;prompt literal&gt;</code></li>
+<li><strong>Prompt:</strong>
+<code>el genetico del tsp da peor que la colonia de hormigas, mejoralo usando 2-opt</code></li>
 <li><strong>Respuesta de la IA:</strong> la primera versión del GA para
 el TSP aplicaba 2-opt solo al mejor individuo de cada generación, con la
 idea de que eso bastaba para que el GA “afinara” la solución.</li>
