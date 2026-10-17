@@ -412,7 +412,7 @@ Estos son errores que aparecieron mientras desarrollábamos el trabajo con ayuda
 
 ### Hallazgo 2 (código): suponer que OSRM marca los tramos de peaje
 
-1. **Prompt:** `<prompt literal con el que se pidió el script de descarga de datos>`
+1. **Prompt:** `haz un script que descargue de osrm las rutas entre las 47 capitales y saque cuantos km de cada ruta son de peaje`
 2. **Respuesta de la IA:** la primera versión del script detectaba los peajes buscando la etiqueta `"toll"` en el campo `classes` de las intersecciones de cada paso de la ruta de OSRM.
 3. **Cómo lo sospechamos:** probamos con rutas que seguro usan autopistas de pago (León-Oviedo por la AP-66, Bilbao-San Sebastián por la AP-8) y el script decía 0 km de peaje en todas.
 4. **Evidencia:** al imprimir los pasos de la ruta León-Oviedo, el paso "AP-66 Autopista Ruta de la Plata" (28,6 km) tenía `classes` vacío. El servidor público de OSRM no devuelve esa clase. Además, la consulta con `exclude=toll` devuelve el error `"Exclude flag combination is not supported."`.
